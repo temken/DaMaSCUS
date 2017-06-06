@@ -1,5 +1,6 @@
-<img src="https://cloud.githubusercontent.com/assets/29034913/26834962/4092f75c-4ad7-11e7-86db-a359734ea2ef.png" width="425">
 # DaMaSCUS
+
+<img src="https://cloud.githubusercontent.com/assets/29034913/26834962/4092f75c-4ad7-11e7-86db-a359734ea2ef.png" width="425">
 
 Dark Matter Simulation Code for Underground Scatterings
 
