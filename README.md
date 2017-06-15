@@ -31,6 +31,11 @@ The included folders are:
 
 For installation and usage we refer to the manual.
 
+## Updates
+- `15.06.2017`: Update: major bug fix concerning mostly very high cross-sections.
+- `06.06.2017`: Release of v1.0
+
+
 ## CITING DaMaSCUS
 
 If you decide to use this code, please cite
