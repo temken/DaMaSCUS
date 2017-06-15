@@ -123,7 +123,6 @@ int main(int argc, char *argv[])
 				durationIni =1e-6*duration_cast<microseconds>( t1 - tStart ).count();
 				cout <<"\tInitial run finished\t(" <<floor(durationIni) <<" s)." <<endl <<endl;
 			}	
-
 	//2. MC run with scatterings and velocity data collection.
 		//Initialize the earth model for the main run
 			Initialize_PREM(mChi,sigma0);
@@ -202,7 +201,7 @@ int main(int argc, char *argv[])
  		   	while(Local_Counter_DatapointsTotal<180.0*Local_SampleSize_Velocity)
  		   	{
  		   		//Simulate track.
- 		   			Trajectory trajectory=ParticleTrack(mChi,sigma0,InitialCondition(0,vEarth,PRNG),vcut,PRNG);
+ 		   			Trajectory trajectory=ParticleTrack(mChi,sigma0,InitialCondition(0,vEarth,PRNG),vcut,PRNG); 		   		
  		   		//Increase counter of tracks and scatterings and vcutoff reachers 
  		   			Local_Counter_Tracks++;
  		   			int scatterings = trajectory.NoOfScatterings();
@@ -230,7 +229,6 @@ int main(int argc, char *argv[])
 								//Increase data counters
 									Local_Counter_Datapoints[IsoRing]++;
 									Local_Counter_DatapointsTotal++;
-									//cout <<"Boom: " <<IsoRing <<"\t" <<Local_Counter_DatapointsTotal <<endl;
 								//Save velocity and weights to file
 									MPI_File_write(file_Velocity[IsoRing],vel.data(),vel.size(),MPI_DOUBLE,&status);
 									MPI_File_write(file_Weights[IsoRing],&weight,1,MPI_DOUBLE,&status);

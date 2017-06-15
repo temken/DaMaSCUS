@@ -11,7 +11,7 @@
 
 //Initial Condition Generator
 extern Event InitialCondition(std::mt19937& PRNG);
-extern Event InitialCondition(double t,Eigen::Vector3d &vearth,std::mt19937& PRNG,double R = rEarth);
+extern Event InitialCondition(double t,Eigen::Vector3d &vearth,std::mt19937& PRNG,double R = 1.1*rEarth);
 
 
 #endif

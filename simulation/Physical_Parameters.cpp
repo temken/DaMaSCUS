@@ -16,6 +16,7 @@
 	const double kg=1E3*gram;
 	//Length
 	const double cm=5.067E13/GeV;
+	const double mm=0.1*cm;
 	const double meter=100*cm;
 	const double km=1000*meter;
 	const double fm=1E-15*meter;

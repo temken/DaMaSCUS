@@ -26,11 +26,14 @@ Event InitialCondition(double t,Eigen::Vector3d &vearth,std::mt19937& PRNG,doubl
 		double xi=ProbabilitySample(PRNG);
 		IniPosi=R*ez+pow(xi,1.0/2.0)*rEarth*(cos(phi)*ex+sin(phi)*ey);
 	//Projection onto a sphere around earth (optional, but I have to do the projection also in time!)
-		double tProject = 1/pow(IniVeli.norm(),2)*(-IniPosi.dot(IniVeli)-sqrt(pow(IniPosi.dot(IniVeli),2)+pow(IniVeli.norm(),2)*(R*R-pow(IniPosi.norm(),2))));
-		IniPosi+=tProject*IniVeli;
-		t+=tProject;
+		// double tProject = 1/pow(IniVeli.norm(),2)*(-IniPosi.dot(IniVeli)-sqrt(pow(IniPosi.dot(IniVeli),2)+pow(IniVeli.norm(),2)*(R*R-pow(IniPosi.norm(),2))));
+		// IniPosi+=tProject*IniVeli;
+		// t+=tProject;
 		
-		if (acos(-IniPosi.normalized().dot(IniVeli.normalized()))>asin(rEarth/IniPosi.norm()))cout <<"WEIRD"<<endl;
+		if (acos(-IniPosi.normalized().dot(IniVeli.normalized()))>asin(rEarth/IniPosi.norm()))
+			{
+				cout <<"Error in InitialCondition(): Send in particle misses the Earth." <<endl;
+			}
 	//Return the result
 
 		return Event (t,IniPosi,IniVeli);
