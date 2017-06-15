@@ -132,6 +132,14 @@
 			cout <<"Error in TrackInterpolation(): This shouldn't happen..."<<endl;
 			return Event();	
 		}
+		Event Trajectory::TrajectoryStart()
+		{
+			return events.front();
+		}
+		Event Trajectory::TrajectoryEnd()
+		{
+			return events.back();
+		}
 
 		//We differentiate three types of Trajectory.
 		// 1 - particle enters the earth and leaves

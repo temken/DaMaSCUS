@@ -17,7 +17,7 @@ using namespace std;
 	//Mass
 	extern const double gram,kg;
 	//Length
-	extern const double cm,meter,km,fm,pb,parsec,kpc,Mpc;
+	extern const double cm,mm,meter,km,fm,pb,parsec,kpc,Mpc;
 	//Time
 	extern const double sec,minute,hour,day,year;
 	//Temperature

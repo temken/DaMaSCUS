@@ -51,6 +51,8 @@ class Trajectory {
 			double tEarthEntry();
 			double tEnd();
 			Event TrackInterpolation(double t);
+			Event TrajectoryStart();
+			Event TrajectoryEnd();
 			int Trajectory_Type();
 			int NoOfScatterings();
 			double TrajectoryLength();

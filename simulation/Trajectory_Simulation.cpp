@@ -84,17 +84,22 @@ Trajectory ParticleTrack(double mX,double sigman0,Event IniCondi, double vcut, s
 		Eigen::Vector3d v=IniCondi.Velocity();
 	//First we check, if the particle even passes the surface of the earth. This is usually never called upon, since the IC generator doesn't generate particles pointing away from the earth.
 		double alphaCone;
-		if(abs(x.norm()-rEarth)<1.0*meter) alphaCone=M_PI/2.0;//this is necessary in the case that the particles start on the earth surface. then rearth/x.norm can be >1 for numerical reasons. And this fucks shit up. sin(1.00000000000001)=nan.
+		if(abs(x.norm()-rEarth)<1.0*meter) alphaCone=M_PI/2.0;//this is necessary in the case that the particles start on the earth surface. then rearth/x.norm can be >1 for numerical reasons.-> sin(1.00000000000001)=nan.
 		else alphaCone=asin(rEarth/x.norm());
 		if (acos(-x.normalized().dot(v.normalized()))<alphaCone)
 		{
 			double TimeOfEntry =(-x.dot(v)-sqrt(pow(x.dot(v),2)-v.dot(v)*(x.dot(x)-pow(rEarth,2))))/(v.dot(v));
 			t+=TimeOfEntry;
-			x+=v*TimeOfEntry;
-			EventList.push_back(Event(t,x,v));
-			InsideEarth=true;
+			x+=v*TimeOfEntry; 
+			//FreePathVector() might interpret sitting on top the surface as being outside the Earth due to numerical imprecision.
+			//This would result in a particle track without a single scattering, which is why we move the particle 1mm underground at the start.
+				if(x.norm()>rEarth)	x+=mm*v.normalized();
+			//Save point of entry and continue
+				EventList.push_back(Event(t,x,v));
+				InsideEarth=true;
 		}
-		else //if (acos(-x.normalized().dot(v.normalized()))>asin(rEarth/x.norm())) //If not we just append an additional point and do not enter the loop.
+		//If the particle doesnt pass the earth surface for whatever reason, we just append an additional point and do not enter the loop.
+		else 
 		{
 			t+=4*rEarth/v.norm();
 			x+=4*rEarth*v.normalized();
