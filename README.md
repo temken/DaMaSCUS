@@ -1,4 +1,4 @@
-# DaMaSCUS
+# DaMaSCUS test
 
 Dark Matter Simulation Code for Underground Scatterings
 
