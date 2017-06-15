@@ -205,7 +205,6 @@ int main(int argc, char *argv[])
  		   		//Increase counter of tracks and scatterings and vcutoff reachers 
  		   			Local_Counter_Tracks++;
  		   			int scatterings = trajectory.NoOfScatterings();
- 		   			if(scatterings==0) cout <<"What the shit"<<endl;
  		   			if(scatterings==0) Local_Counter_Free++;
  		   			else Local_Counter_Scatterings+=scatterings;
  		   			if(trajectory.Trajectory_Type()==2)	Local_Counter_vCutoff++;	
