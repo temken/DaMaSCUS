@@ -158,14 +158,14 @@ int main(int argc, char *argv[])
 			
 
 
-	//Go through the files
+	//Go through the files and analyze isodetection ring by ring.
 		if(myRank==0) cout <<"Start data analysis..." <<endl;
 		double R_A; //the analytic result for the event rate must only be computed once.
 		for(int i=iList[myRank];i<iList[myRank+1];i++)
 		{
 			std::vector<double> AverageSpeed;
 			std::vector<double> TotalRate;
-			//Files
+			//Open Files
 				MPI_File VelocityFile,WeightFile;
 				MPI_Status status;
 				string VelocityFilename="../data/"+SimID+"_data/velocity."+std::to_string(i);
@@ -175,58 +175,60 @@ int main(int argc, char *argv[])
 				rc = MPI_File_open(MPI_COMM_SELF, WeightFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &WeightFile );
 				if (rc) cout <<"Unable to read file " <<WeightFilename <<"."<<endl;
 
-			//Histogram bin number and width. We first find the maximal speed in the sample defining the histogram domain.
-				double vMax = 0.0;
-				double vMin=0.0;
-				double WSum=0.0;
-				double vMean=0.0;
-				for(int j=0;j<SampleSize;j++)
-				{
-					Eigen::Vector3d v;
-					MPI_File_read(VelocityFile,v.data(),v.size(),MPI_DOUBLE,&status);
-					double speed=v.norm();
-					if(speed>vMax)			vMax=speed;
-					//Compute weighted mean velocity;
-						double weight;
-						MPI_File_read(WeightFile,&weight,1,MPI_DOUBLE,&status);
-						WSum+=weight;
-						vMean+=speed*weight;
-				}
-				vMean/=WSum;
-				//Close and reopen the file 
-					MPI_File_close( &VelocityFile );
-					rc = MPI_File_open(MPI_COMM_SELF, VelocityFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &VelocityFile );
-					if (rc) cout <<"Unable to read file " <<VelocityFilename <<"."<<endl;
-					MPI_File_close( &WeightFile );
-					rc = MPI_File_open(MPI_COMM_SELF, WeightFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &WeightFile );
-					if (rc) cout <<"Unable to read file " <<WeightFilename <<"."<<endl;
-				//Now we can compute the variance for Scott's rule
-					double SpeedVariance=0.0;
+			//First we calculate the histogram domain, the weighted speed average, variance and standard error. 
+				//1. Compute the weighted average speed and find the maximum speed in the sample, which defines our histogram's domain. 
+					double vMax = 0.0;
+					double vMin=0.0;
+					double WeightSum=0.0;
+					double SpeedSum=0.0;
 					for(int j=0;j<SampleSize;j++)
 					{
 						Eigen::Vector3d v;
 						MPI_File_read(VelocityFile,v.data(),v.size(),MPI_DOUBLE,&status);
 						double speed=v.norm();
-						//Compute weighted mean velocity;
-						double weight;
-						MPI_File_read(WeightFile,&weight,1,MPI_DOUBLE,&status);
-						SpeedVariance+=weight*pow(speed-vMean,2.0)/WSum;
+						if(speed>vMax)			vMax=speed;
+						//Compute weighted mean speed;
+							double weight;
+							MPI_File_read(WeightFile,&weight,1,MPI_DOUBLE,&status);
+							WeightSum+=weight;
+							SpeedSum+=speed*weight;
 					}
-				//Close and reopen the file 
-					MPI_File_close( &VelocityFile );
-					rc = MPI_File_open(MPI_COMM_SELF, VelocityFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &VelocityFile );
-					if (rc) cout <<"Unable to read file " <<VelocityFilename <<"."<<endl;
-					MPI_File_close( &WeightFile );
-					rc = MPI_File_open(MPI_COMM_SELF, WeightFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &WeightFile );
-					if (rc) cout <<"Unable to read file " <<WeightFilename <<"."<<endl;
-
-				//Number of Bins (Rice Rule)
-					// int bins=ceil(2*pow(SampleSize,1.0/3.0));
-					// double h = (vMax-vMin)/bins; 
-				//Number of bins (Scott's rule)
+					double MeanSpeed=SpeedSum/WeightSum;
+				
+				//2. Now we can compute the variance for Scott's rule, as well as the standard error (not deviation!) of the Mean Velocity with Cochran formula
+					double SpeedVariance=0.0;
+					double MeanWeight=WeightSum/SampleSize;
+					double sum1=0.0;
+					double sum2=0.0;
+					double sum3=0.0;
+					//Jump back to the top of file 
+						MPI_File_seek(VelocityFile, 0,MPI_SEEK_SET);
+						MPI_File_seek(WeightFile,0,MPI_SEEK_SET);
+					for(int j=0;j<SampleSize;j++)
+					{
+						//Read in velocity and data weight
+							Eigen::Vector3d v;
+							double weight;
+							MPI_File_read(VelocityFile,v.data(),v.size(),MPI_DOUBLE,&status);
+							MPI_File_read(WeightFile,&weight,1,MPI_DOUBLE,&status);
+							double speed=v.norm();					
+						//Compute variance of the sample;
+							SpeedVariance+=weight*pow(speed-MeanSpeed,2.0)/WeightSum;
+						//Standard Error
+							sum1+=pow(weight*speed-MeanWeight*MeanSpeed,2.0);
+							sum2+=(weight-MeanWeight)*(weight*speed-MeanWeight*MeanSpeed);
+							sum3+=pow(weight-MeanWeight,2.0);
+					}
+					double StandardError = sqrt(SampleSize/(SampleSize-1)/pow(WeightSum,2.0)*(sum1-2.0*MeanSpeed*sum2+pow(MeanSpeed,2.0)*sum3));
+					//Save the average speed and standard error into a file
+						AverageSpeed.push_back(i);
+						AverageSpeed.push_back(MeanSpeed);
+						AverageSpeed.push_back(StandardError);
+						MPI_File_write(file_speed,AverageSpeed.data(),AverageSpeed.size(),MPI_DOUBLE,&status);
+				//3. Use Scott's rule for the bin width
 					double h = 3.5*sqrt(SpeedVariance)/pow(SampleSize,1.0/3.0);
-					// double h = 3.5*v0/sqrt(2.0)/pow(SampleSize,1.0/3.0);
 					double bins = ceil((vMax-vMin)/h);
+			
 			//Create Histogram including errors
 				vector< vector<double> > VelocityHistogram (bins, vector<double>(4));
 				for(int j =0;j<bins;j++)
@@ -236,8 +238,9 @@ int main(int argc, char *argv[])
 					VelocityHistogram[j][2]=h/2.0;			//error on x 
 					VelocityHistogram[j][3]=0.0;			//error on y
 				} 
-				double WeightSum=0;
-				double VelocitySum=0;
+				//Jump back to the top of file 
+					MPI_File_seek(VelocityFile, 0,MPI_SEEK_SET);
+					MPI_File_seek(WeightFile,0,MPI_SEEK_SET);
 				for(int j=0;j<SampleSize;j++)
 				{
 					Eigen::Vector3d v;
@@ -248,8 +251,8 @@ int main(int argc, char *argv[])
 					bin=(v.norm()-vMin)/h;
 					VelocityHistogram[bin][1]+=weight;
 					VelocityHistogram[bin][3]+=weight*weight;
-					WeightSum+=weight;
-					VelocitySum+=v.norm()*weight;
+					// WeightSum+=weight;
+					// VelocitySum+=v.norm()*weight;
 				}
 				//Normalize the histogram and the average, and the errors
 					for (int j=0;j<bins;j++)
@@ -257,31 +260,7 @@ int main(int argc, char *argv[])
 						VelocityHistogram[j][1]/=h*WeightSum;
 						VelocityHistogram[j][3]/=h*h*WeightSum*WeightSum;
 						VelocityHistogram[j][3]=sqrt(VelocityHistogram[j][3]);
-					} 
-					double MeanVelocity = VelocitySum/WeightSum;
-				//Standard error (not deviation!) of the Mean Velocity with Cochran formula (http://www.cs.tufts.edu/~nr/cs257/archive/donald-gatz/weighted-standard-error.pdf)
-					MPI_File_seek(VelocityFile, 0,MPI_SEEK_SET);
-					MPI_File_seek(WeightFile,0,MPI_SEEK_SET);
-					double MeanWeight=WeightSum/SampleSize;
-					double sum1=0.0;
-					double sum2=0.0;
-					double sum3=0.0;
-					for(int j=0;j<SampleSize;j++)
-					{
-						Eigen::Vector3d v;
-						double weight;
-						MPI_File_read(VelocityFile,v.data(),v.size(),MPI_DOUBLE,&status);
-						MPI_File_read(WeightFile,&weight,1,MPI_DOUBLE,&status);
-						double vnorm=v.norm();
-						sum1+=pow(weight*vnorm-MeanWeight*MeanVelocity,2.0);
-						sum2+=(weight-MeanWeight)*(weight*vnorm-MeanWeight*MeanVelocity);
-						sum3+=pow(weight-MeanWeight,2.0);
-					}
-					double StandardError = sqrt(SampleSize/(SampleSize-1)/pow(WeightSum,2.0)*(sum1-2.0*MeanVelocity*sum2+pow(MeanVelocity,2.0)*sum3));
-					AverageSpeed.push_back(i);
-					AverageSpeed.push_back(MeanVelocity);
-					AverageSpeed.push_back(StandardError);
-					MPI_File_write(file_speed,AverageSpeed.data(),AverageSpeed.size(),MPI_DOUBLE,&status);
+					} 			
 
 			//Close Files
 				MPI_File_close( &VelocityFile );
