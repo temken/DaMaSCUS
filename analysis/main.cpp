@@ -341,7 +341,7 @@ int main(int argc, char *argv[])
 			//ASCII Output files
 				ofstream f,g;
 				f.open("../results/"+SimID+".speed");
-				g.open("../results/"+SimID+".rate");
+				g.open("../results/"+SimID+"."+experiment);
 			//Write results in ascii files.
 			for(int ring=0;ring<180;ring++)
 			{
