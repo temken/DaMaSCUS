@@ -3,4 +3,10 @@
 *.sublime-workspace
 *.o
 .depend
+*.log
+*.speed
+*.rho
+*.LUX
+*.CRESST-II
+
 
