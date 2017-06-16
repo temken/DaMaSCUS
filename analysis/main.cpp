@@ -118,16 +118,6 @@ int main(int argc, char *argv[])
 		MPI_Barrier(MPI_COMM_WORLD);
 
 ////////////////////////////////////////////////////////////
-		//Histogram specifications
-			double vMax = vEarth.norm()+vesc;
-			double vMin=0.0;
-			//Number of Bins (Rice Rule)
-				// int bins=ceil(2*pow(SampleSize,1.0/3.0));
-				// double h = (vMax-vMin)/bins; 
-			//Number of bins (Scott's rule)
-				double h = 3.5*v0/sqrt(2.0)/pow(SampleSize,1.0/3.0);
-				double bins = ceil((vMax-vMin)/h);
-
 		//DM Density	
  		//The master reads and copies the rho file from the /data directory. Afterwards he shares the vector with everyone.
 			std::vector<std::vector<double>> rho(180, vector<double>(2));
@@ -184,7 +174,30 @@ int main(int argc, char *argv[])
 				if (rc) cout <<"Unable to read file " <<VelocityFilename <<"."<<endl;
 				rc = MPI_File_open(MPI_COMM_SELF, WeightFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &WeightFile );
 				if (rc) cout <<"Unable to read file " <<WeightFilename <<"."<<endl;
-			
+
+			//Histogram bin number and width. We first find the maximal speed in the sample defining the histogram domain.
+				double vMax = 0.0;
+				double vMin=0.0;
+				for(int j=0;j<SampleSize;j++)
+				{
+					Eigen::Vector3d v;
+					MPI_File_read(VelocityFile,v.data(),v.size(),MPI_DOUBLE,&status);
+					double speed=v.norm();
+					if(speed>vMax)			vMax=speed;
+				}
+				//Close and reopen the file 
+					MPI_File_close( &VelocityFile );
+					rc = MPI_File_open(MPI_COMM_SELF, VelocityFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &VelocityFile );
+					if (rc) cout <<"Unable to read file " <<VelocityFilename <<"."<<endl;
+				cout <<i <<"\t vMin=" <<InUnits(vMin,km/sec) <<"\tvMax="<<InUnits(vMax,km/sec);
+							
+				//Number of Bins (Rice Rule)
+					// int bins=ceil(2*pow(SampleSize,1.0/3.0));
+					// double h = (vMax-vMin)/bins; 
+				//Number of bins (Scott's rule)
+					double h = 3.5*v0/sqrt(2.0)/pow(SampleSize,1.0/3.0);
+					double bins = ceil((vMax-vMin)/h);
+					cout <<"\t Bins: " <<bins <<endl;
 			//Create Histogram including errors
 				vector< vector<double> > VelocityHistogram (bins, vector<double>(4));
 				for(int j =0;j<bins;j++)
