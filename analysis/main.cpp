@@ -102,17 +102,17 @@ int main(int argc, char *argv[])
 	   		offset = iList[myRank] * 3 * sizeof(double);
 	  		MPI_File_seek(file_speed, offset,MPI_SEEK_SET);
 	  	//Event rate output
-		  	string RateFilename="../results/"+SimID+".rateTemp";
-		  	test=MPI_File_open(MPI_COMM_WORLD,RateFilename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_rate);
-		    //if it already exists, it will be overwritten!
-			if(test != MPI_SUCCESS)
-			{
-	  			if (myRank == 0) MPI_File_delete(RateFilename.c_str(),MPI_INFO_NULL);
-		  		test=MPI_File_open(MPI_COMM_WORLD,RateFilename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_rate);
-		  	}
-		  	//Offset for (ring,rate,error,analytic rate)
-	   		offset = iList[myRank] * 4 * sizeof(double);
-	  		MPI_File_seek(file_rate, offset,MPI_SEEK_SET);
+	  		string RateFilename="../results/"+SimID+".rateTemp";
+	 		test=MPI_File_open(MPI_COMM_WORLD,RateFilename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_rate);
+		   	//if it already exists, it will be overwritten!
+				if(test != MPI_SUCCESS)
+				{
+		 				if (myRank == 0) MPI_File_delete(RateFilename.c_str(),MPI_INFO_NULL);
+		  			test=MPI_File_open(MPI_COMM_WORLD,RateFilename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_rate);
+		  		}
+		 		//Offset for (ring,rate,error,analytic rate)
+	   			offset = iList[myRank] * 4 * sizeof(double);
+	  			MPI_File_seek(file_rate, offset,MPI_SEEK_SET);  	
 	
 	//Synchronize processes:
 		MPI_Barrier(MPI_COMM_WORLD);
@@ -315,6 +315,7 @@ int main(int argc, char *argv[])
 						TotalRate.push_back(R_A);
 						MPI_File_write(file_rate,TotalRate.data(),TotalRate.size(),MPI_DOUBLE,&status);
 				}
+				else if(experiment=="None") cout <<"No event rate is computed." <<endl;
 				else
 				{
 					cout <<"Error: Experiment not recognized." <<endl;
@@ -333,31 +334,43 @@ int main(int argc, char *argv[])
 		{
 			cout <<"Creating ASCII output." <<endl;
 			//Binary Input files
-				MPI_File speedfile,ratefile;
+			//Speed
+				MPI_File speedfile;
 				int rc = MPI_File_open(MPI_COMM_SELF, SpeedFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &speedfile );
 				if (rc) cout <<"Unable to read file " <<SpeedFilename <<"."<<endl;
-				rc = MPI_File_open(MPI_COMM_SELF, RateFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &ratefile );
-				if (rc) cout <<"Unable to read file " <<RateFilename <<"."<<endl;
-			//ASCII Output files
-				ofstream f,g;
-				f.open("../results/"+SimID+".speed");
-				g.open("../results/"+SimID+"."+experiment);
-			//Write results in ascii files.
-			for(int ring=0;ring<180;ring++)
-			{
-				std::vector<double> speedbuffer (3);
-				MPI_File_read(speedfile,speedbuffer.data(),speedbuffer.size(),MPI_DOUBLE,&status);
-				f <<ring <<"\t" <<speedbuffer[1]<<"\t"<<speedbuffer[2]<<endl;
-				std::vector<double> ratebuffer (4);
-				MPI_File_read(ratefile,ratebuffer.data(),ratebuffer.size(),MPI_DOUBLE,&status);
-				g <<ring <<"\t" <<ratebuffer[1]<<"\t"<<ratebuffer[2]<<"\t"<<ratebuffer[3]<<endl;
-			}
-			//Close files
-				f.close();
-				g.close();
-				MPI_File_close(&speedfile);
-				MPI_File_close(&ratefile);
-			
+				//ASCII Output files
+					ofstream f;
+					f.open("../results/"+SimID+".speed");
+				//Write results in ascii files.
+					for(int ring=0;ring<180;ring++)
+					{
+						std::vector<double> speedbuffer (3);
+						MPI_File_read(speedfile,speedbuffer.data(),speedbuffer.size(),MPI_DOUBLE,&status);
+						f <<ring <<"\t" <<speedbuffer[1]<<"\t"<<speedbuffer[2]<<endl;
+					}
+				//Close file
+					f.close();
+					MPI_File_close(&speedfile);
+			//Rate
+				if(experiment!="None")
+				{
+					MPI_File ratefile;
+					rc = MPI_File_open(MPI_COMM_SELF, RateFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &ratefile );
+					if (rc) cout <<"Unable to read file " <<RateFilename <<"."<<endl;
+					//ASCII Output files
+						ofstream g;
+						g.open("../results/"+SimID+"."+experiment);
+					//Write results in ascii files.
+						for(int ring=0;ring<180;ring++)
+						{
+							std::vector<double> ratebuffer (4);
+							MPI_File_read(ratefile,ratebuffer.data(),ratebuffer.size(),MPI_DOUBLE,&status);
+							g <<ring <<"\t" <<ratebuffer[1]<<"\t"<<ratebuffer[2]<<"\t"<<ratebuffer[3]<<endl;
+						}
+					//Close files
+						g.close();
+						MPI_File_close(&ratefile);
+				}
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
 		
