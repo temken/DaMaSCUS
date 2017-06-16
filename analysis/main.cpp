@@ -315,11 +315,11 @@ int main(int argc, char *argv[])
 						TotalRate.push_back(R_A);
 						MPI_File_write(file_rate,TotalRate.data(),TotalRate.size(),MPI_DOUBLE,&status);
 				}
-				else if(experiment=="None") cout <<"No event rate is computed." <<endl;
-				else
+				else if(experiment!="None")
 				{
-					cout <<"Error: Experiment not recognized." <<endl;
-					return 0;
+					if(myRank==0) cout <<"Error: Experiment not recognized. No detection rate will be computed." <<endl;
+					experiment="None";
+					//return 0;
 				}
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
