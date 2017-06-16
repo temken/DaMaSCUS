@@ -319,7 +319,6 @@ int main(int argc, char *argv[])
 				{
 					if(myRank==0) cout <<"Error: Experiment not recognized. No detection rate will be computed." <<endl;
 					experiment="None";
-					//return 0;
 				}
 		}
 		MPI_Barrier(MPI_COMM_WORLD);

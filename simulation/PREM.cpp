@@ -44,7 +44,7 @@
 	{
 		{26,56,	0.855},		//Iron			Fe
 		{14,28,	0.06},		//Silicon		Si
-		{28,59,	0.052},		//Nickel		Ni
+		{28,58,	0.052},		//Nickel		Ni
 		{16,32,	0.019},		//Sulfur		S
 		{24,52,	0.009},		//Chromium		Cr
 		{25,55,	0.003},		//Manganese		Mn
@@ -62,7 +62,7 @@
 		{13,27,	0.0235},	//Aluminium		Al
 		{11,23,	0.0027},	//Natrium		Na
 		{24,52,	0.0026},	//Chromium		Cr
-		{28,59,	0.002},		//Nickel		Ni
+		{28,58,	0.002},		//Nickel		Ni
 		{25,55,	0.001},		//Manganese		Mn
 		{16,32,	0.0003},	//Sulfur		S
 		{6,12,	0.0001},	//Carbon		C
