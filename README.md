@@ -32,7 +32,8 @@ The included folders are:
 For installation and usage we refer to the manual.
 
 ## Updates
-- `15.06.2017`: Update: major bug fix concerning mostly very high cross-sections.
+The code will be updated continuously. Here I list only important updates and major bug fixes 
+- `15.06.2017`: Release of v1.0.1: major bug fix concerning mostly very high cross-sections.
 - `06.06.2017`: Release of v1.0
 
 
