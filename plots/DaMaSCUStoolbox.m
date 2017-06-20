@@ -35,15 +35,15 @@ AverageDMSpeed::usage="AverageDMSpeed[{dd,mm,yyyy},{h,m,s}] returns the average 
 
 
 (* ::Section::Initialization:: *)
-(*(*(*(*(*Global Constants*)*)*)*)*)
+(*(*(*(*(*(*(*Global Constants*)*)*)*)*)*)*)
 
 
 (* ::Subsection::Initialization:: *)
-(*(*(*(*(*Physical Parameters and Units*)*)*)*)*)
+(*(*(*(*(*(*(*Physical Parameters and Units*)*)*)*)*)*)*)
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Units*)*)*)*)*)
+(*(*(*(*(*(*(*Units*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -76,7 +76,7 @@ Mpc=10^6 pc;
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Specific Parameters*)*)*)*)*)
+(*(*(*(*(*(*(*Specific Parameters*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -92,7 +92,7 @@ ElementaryCharge=0.30282212;
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Dark Matter Halo Parameters*)*)*)*)*)
+(*(*(*(*(*(*(*Dark Matter Halo Parameters*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -103,7 +103,7 @@ Nesc=\[Pi] v0^2 (Sqrt[\[Pi]]v0 Erf[vesc/v0]-2vesc Exp[-vesc^2/v0^2]);
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Astrophysical Parameters*)*)*)*)*)
+(*(*(*(*(*(*(*Astrophysical Parameters*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -116,7 +116,7 @@ r\[Sun]=6.957 10^8  meter;
 
 
 (* ::Section::Initialization:: *)
-(*(*(*(*(*Functions*)*)*)*)*)
+(*(*(*(*(*(*(*Functions*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -124,7 +124,7 @@ Begin["`Private`"]
 
 
 (* ::Subsection::Initialization:: *)
-(*(*(*(*(*General physical functions*)*)*)*)*)
+(*(*(*(*(*(*(*General physical functions*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -133,11 +133,11 @@ InUnits[number_,units_]:=number/units
 
 
 (* ::Subsection::Initialization:: *)
-(*(*(*(*(*Coordinate Systems*)*)*)*)*)
+(*(*(*(*(*(*(*Coordinate Systems*)*)*)*)*)*)*)
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Spherical Coordinates*)*)*)*)*)
+(*(*(*(*(*(*(*Spherical Coordinates*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -148,7 +148,7 @@ Cartesian2Spherical2[{x_,y_,z_}]:={Sqrt[x^2+y^2+z^2],z/Sqrt[x^2+y^2+z^2],Mod[Arc
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Going from equatorial rectangular coordinates to galactic coordinates and back (arxiv: 1312:1355v2)*)*)*)*)*)
+(*(*(*(*(*(*(*Going from equatorial rectangular coordinates to galactic coordinates and back (arxiv: 1312:1355v2)*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -179,7 +179,7 @@ Return[P.Inverse[M].vec]
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Transformation between Lab and Equat Frame*)*)*)*)*)
+(*(*(*(*(*(*(*Transformation between Lab and Equat Frame*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -198,7 +198,7 @@ Return[Inverse[N].vec]
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Transformation between lab and galactic frame*)*)*)*)*)
+(*(*(*(*(*(*(*Transformation between lab and galactic frame*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -208,7 +208,7 @@ Gal2Lab[vec_,{lat_,lon_},nJ2000_]:=Equat2Lab[Gal2Equat[vec,nJ2000/36525],{lat,lo
 
 
 (* ::Subsection::Initialization:: *)
-(*(*(*(*(*Sidereal Time*)*)*)*)*)
+(*(*(*(*(*(*(*Sidereal Time*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -244,11 +244,11 @@ Return[{h,m,s}]
 
 
 (* ::Subsection::Initialization:: *)
-(*(*(*(*(*Earth and laboratory velocity*)*)*)*)*)
+(*(*(*(*(*(*(*Earth and laboratory velocity*)*)*)*)*)*)*)
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Earth Velocity and fractional days from arxiv:1312:1355v2*)*)*)*)*)
+(*(*(*(*(*(*(*Earth Velocity and fractional days from arxiv:1312:1355v2*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
@@ -279,22 +279,20 @@ LabVelocity[n_:0,{latitude_,longitude_}]:=EarthVelocity[n]+RotationVelocity[n,{l
 
 
 (* ::Subsection::Initialization:: *)
-(*(*(*(*(*Dark Matter Functions*)*)*)*)*)
+(*(*(*(*(*(*(*Dark Matter Functions*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
-VelocityDistribution[v_,vE_]:=1/Nesc Exp[-((v-vE).(v-vE)/v0^2)]
+VelocityDistribution[v_,vE_]:=1/Nesc Exp[-((v+vE).(v+vE)/v0^2)]
 VelocityDistribution2[v_?NumericQ,cos\[Theta]_?NumericQ,\[Phi]_?NumericQ,vE_]:=Module[{ve},
 ve=Cartesian2Spherical[vE];
 Return[(1/(\[Pi] v0^2))^(3/2) Exp[-(v^2+ve[[1]]^2)/v0^2]Exp[-((2v ve[[1]])/v0^2)(cos\[Theta] Cos[ve[[2]]]+Cos[\[Phi]-ve[[3]]] Sqrt[1-cos\[Theta]^2] Sin[ve[[2]]])]]
 ]
-SpeedDistribution[v_?NumericQ,vE_]:=Module[{cos\[Theta],\[Phi]},Return[NIntegrate[v^2 VelocityDistribution2[v,cos\[Theta],\[Phi],vE],{cos\[Theta],-1,1},{\[Phi],0,2\[Pi]}]];
-]
+SpeedDistribution[v_?NumericQ,ve_]:=(2\[Pi] v v0^2)/(Nesc Norm[ve]) Exp[-(v^2+Norm[ve]^2)/v0^2]Sinh[(2v Norm[ve])/v0^2]
 
 
 (* ::Input::Initialization:: *)
-AverageDMSpeed[date_,time_]:=Module[{angles,\[Theta],\[Phi],v,Cos\[Delta],vO,vEsc,int,int2,ve,vE},
-vE=EarthVelocity[FractionalDays[date,time]];
+AverageDMSpeed[vE_]:=Module[{angles,\[Theta],\[Phi],v,Cos\[Delta],vO,vEsc,int,int2,ve},
 angles=Cartesian2Spherical[vE];
 int=Simplify[Integrate[Sin[\[Theta]]v^3 1/Nesc Exp[-((v^2+ve^2+2v ve Cos\[Delta])/vO^2)],{v,0,-Cos\[Delta] ve+Sqrt[vEsc^2-ve^2 (1-Cos\[Delta]^2)]}]];
 int2=int/.{Cos\[Delta]->Cos[angles[[2]]]Cos[\[Theta]]+Cos[\[Phi]-angles[[3]]]Sin[angles[[2]]]Sin[\[Theta]]};
@@ -329,11 +327,11 @@ vMinimum[ER_?NumericQ,m\[Chi]_,A_:131]:=Sqrt[mNucleon A  ER/(2 ReducedMass[m\[Ch
 
 
 (* ::Subsection::Initialization:: *)
-(*(*(*(*(*Detector Modules*)*)*)*)*)
+(*(*(*(*(*(*(*Detector Modules*)*)*)*)*)*)*)
 
 
 (* ::Text::Initialization:: *)
-(*(*(*(*(*Detector data for a given time*)*)*)*)*)
+(*(*(*(*(*(*(*Detector data for a given time*)*)*)*)*)*)*)
 
 
 (* ::Input::Initialization:: *)
