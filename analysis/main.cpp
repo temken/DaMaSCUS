@@ -284,14 +284,14 @@ int main(int argc, char *argv[])
 						std::vector<std::vector<double>> dRdEH_W = dRdEHistogram(0.64,184,rho[i],mChi,sigma,etaH);
 					//Save dRdE histograms for CRESST-II	
 						f.open("../results/"+SimID+"_histograms/dRdE."+std::to_string(i));
-						//Find Emax for the histogram
-							// std::vector<double> EmaxV;
-							// EmaxV.push_back(dRdEH_O.back()[0]+3.0*62*eV);
-							// EmaxV.push_back(dRdEH_Ca.back()[0]+3.0*62*eV);
-							// EmaxV.push_back(dRdEH_W.back()[0]+3.0*62*eV);
-							// double Emax = *std::max_element( EmaxV.begin(), EmaxV.end() );
-						double Emax=4*keV;	
-						double dE=Emax/100;
+						//Emin and Emax for the histogram
+							double Emin=0.3*keV;
+							std::vector<double> EmaxV;
+							EmaxV.push_back(dRdEH_O.back()[0]+3.0*62*eV);
+							EmaxV.push_back(dRdEH_Ca.back()[0]+3.0*62*eV);
+							EmaxV.push_back(dRdEH_W.back()[0]+3.0*62*eV);
+							double Emax = *std::max_element( EmaxV.begin(), EmaxV.end() );	
+						double dE=(Emax-Emin)/100;
 						//Below 0.3keV the efficiency is assumed to zero. 0.3 keV is the threshold
 						for(double E=0.3*keV;E<=Emax;E+=dE)
 						{
