@@ -291,8 +291,9 @@ int main(int argc, char *argv[])
 							EmaxV.push_back(dRdEH_Ca.back()[0]+3.0*62*eV);
 							EmaxV.push_back(dRdEH_W.back()[0]+3.0*62*eV);
 							double Emax = *std::max_element( EmaxV.begin(), EmaxV.end() );	
-						if(Emax<0.4*keV) Emax=0.4*keV;
-						double dE=(Emax-Emin)/100;
+							//For very low signal rates we only save the first low 0.1keV of the spectrum.
+							if(Emax<0.4*keV) Emax=0.4*keV;
+						double dE=(Emax-Emin)/100.;
 						//Below 0.3keV the efficiency is assumed to zero. 0.3 keV is the threshold
 						for(double E=0.3*keV;E<=Emax;E+=dE)
 						{
