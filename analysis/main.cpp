@@ -362,7 +362,7 @@ int main(int argc, char *argv[])
 					//Mean computing time of all finished isodetection rings so far. This will be used to make the prognosis.
 						durationMean=1.0*(i-iList[myRank])/(i-iList[myRank]+1)*durationMean+1.0*durationIR/(i-iList[myRank]+1);
 					
-					cout <<myRank<<"\t\t" <<i<<"\t\t\t" <<floor(100.0*(i-iList[myRank]+1)/(iList[myRank+1]-iList[myRank]))<<"\%\t\t"<<ceil(durationIR)<<"\t\t\t"<<ceil((iList[myRank+1]-i+1)*durationMean)<<endl;	
+					cout <<myRank<<"\t\t" <<i<<"\t\t\t" <<floor(100.0*(i-iList[myRank]+1)/(iList[myRank+1]-iList[myRank]))<<"\%\t\t"<<ceil(durationIR)<<"\t\t\t"<<ceil((iList[myRank+1]-i-1)*durationMean)<<endl;	
 				
 
 		}
