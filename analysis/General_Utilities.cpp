@@ -161,8 +161,8 @@ using namespace libconfig;
 		for(int i =0 ; i<=WorldSize; i++)
 		{
 			if(i==0) 			output.push_back(0);
-			else if(i<=overlap)	output.push_back(i*floor(180.0/WorldSize));
-			else				output.push_back(output[i-1]+ceil(180.0/WorldSize));
+			else if(i<=(WorldSize-overlap))	output.push_back(i*ceil(180.0/WorldSize));
+			else				output.push_back(output[i-1]+floor(180.0/WorldSize));
 		}
 		return output;
 	}
