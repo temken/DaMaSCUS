@@ -159,12 +159,20 @@ int main(int argc, char *argv[])
 
 
 	//Go through the files and analyze isodetection ring by ring.
-		if(myRank==0) cout <<"Start data analysis..." <<endl;
+		if(myRank==0) 
+		{
+			cout <<"Start data analysis..." <<endl<<endl
+			<<"MPI rank\tIsodetection ring\tLocal Progress\tComputing time[s]\tResidual time estimate[s]"<<endl;
+		}
+			
 		double R_A; //the analytic result for the event rate must only be computed once.
+		double durationMean=0.0; //for the estimation of the residual time
 		for(int i=iList[myRank];i<iList[myRank+1];i++)
 		{
-			std::vector<double> AverageSpeed;
-			std::vector<double> TotalRate;
+			//Beginning time of this isodetection ring
+				high_resolution_clock::time_point tIRstart;
+				tIRstart = high_resolution_clock::now();
+			
 			//Open Files
 				MPI_File VelocityFile,WeightFile;
 				MPI_Status status;
@@ -176,6 +184,7 @@ int main(int argc, char *argv[])
 				if (rc) cout <<"Unable to read file " <<WeightFilename <<"."<<endl;
 
 			//First we calculate the histogram domain, the weighted speed average, variance and standard error. 
+				std::vector<double> AverageSpeed;
 				//1. Compute the weighted average speed and find the maximum speed in the sample, which defines our histogram's domain. 
 					double vMax = 0.0;
 					double vMin=0.0;
@@ -276,6 +285,7 @@ int main(int argc, char *argv[])
 				for(unsigned int j=0;j<etaH.size();j++) f<<etaH[j][0] <<"\t"<<etaH[j][1] <<"\t"<<etaH[j][2] <<"\t"<<etaH[j][3]<<endl;
 				f.close();
 			//Calculate the event rate.
+				std::vector<double> TotalRate;
 				if(experiment=="CRESST-II")
 				{
 					//Create Recoil Spectrum Histograms
@@ -344,9 +354,20 @@ int main(int argc, char *argv[])
 					if(myRank==0) cout <<"Error: Experiment not recognized. No detection rate will be computed." <<endl;
 					experiment="None";
 				}
+				//Console output to give an indication of the progress
+					//computing time of this isodetection ring
+						high_resolution_clock::time_point tIRend;
+						tIRend = high_resolution_clock::now();
+						double durationIR =1e-6*duration_cast<microseconds>( tIRend - tIRstart ).count();
+					//Mean computing time of all finished isodetection rings so far. This will be used to make the prognosis.
+						durationMean=1.0*(i-iList[myRank])/(i-iList[myRank]+1)*durationMean+1.0*durationIR/(i-iList[myRank]+1);
+					
+					cout <<myRank<<"\t\t" <<i<<"\t\t\t" <<floor(100.0*(i-iList[myRank]+1)/(iList[myRank+1]-iList[myRank]))<<"\%\t\t"<<ceil(durationIR)<<"\t\t\t"<<ceil((iList[myRank+1]-i+1)*durationMean)<<endl;	
+				
+
 		}
 		MPI_Barrier(MPI_COMM_WORLD);
-		if(myRank==0) cout <<"Data analysis complete." <<endl;
+		if(myRank==0) cout <<"\nData analysis complete." <<endl;
 		MPI_File_close(&file_speed);
 		MPI_File_close(&file_rate);
 		
