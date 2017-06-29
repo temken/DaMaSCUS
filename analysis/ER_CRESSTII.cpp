@@ -59,6 +59,8 @@
 
 	double DetectorResponse(double ER,double E)
 	{
+		if(ER==0.0) return 0.0;
+		// if(abs(ER-E)>4.8*62*eV) return 0.0;
 		double sigmaE2=pow(62*eV,2);
 		return 0.5*Efficiency(E)/sqrt(2*M_PI*sigmaE2)*exp(-(ER-E)*(ER-E)/2.0/sigmaE2);
 	}
@@ -67,9 +69,9 @@
 	double dRdE_CRESSTII_A(double E,double rhoDM,double mChi,double sigma,double vE)
 	{
 		double minDev=0.1;
-		double ERmin = 0.0;
 		double sigmaE=62*eV;
 		int A[]={16,40,184};
+		double ERmin =0;
 		double X[]={0.22,0.14,0.64};
 		//Find the max. recoil energy
 			std::vector<double> ERmaxV;
@@ -81,10 +83,10 @@
 			double integral_old=1.0;
 			double integral_new=0.0;
 			double interval = ERmax-ERmin;
-			double dER = interval;
+			double dER = interval/10;
 			while(100.0*abs(integral_old-integral_new)/abs(integral_old)>minDev)
 			{
-				dER/=2;
+				dER/=10;
 				integral_old=integral_new;
 				int n = interval/dER;
 				double sum=0.0;
@@ -139,22 +141,26 @@
 	{
 		std::vector<double> output;
 		double minDev=0.1;
-		double ERmin = 0.0;
 		int A[]={16,40,184};
 		double sigmaE=62*eV;
+		double ERmin = 0;
 		//Find the max. recoil energy
 			std::vector<double> ERmaxV;
-			for(int i=0;i<3;i++)	ERmaxV.push_back(2*Mu(mChi,A[i]*mNucleon)*Mu(mChi,A[i]*mNucleon)*pow(vE+vesc,2.0)/A[i]/mNucleon+3.0*sigmaE);
+			// for(int i=0;i<3;i++)	ERmaxV.push_back(2*Mu(mChi,A[i]*mNucleon)*Mu(mChi,A[i]*mNucleon)*pow(vE+vesc,2.0)/A[i]/mNucleon+3.0*sigmaE);
+			ERmaxV.push_back(drdehistoO.back()[0]+3.0*sigmaE);
+			ERmaxV.push_back(drdehistoCa.back()[0]+3.0*sigmaE);
+			ERmaxV.push_back(drdehistoW.back()[0]+3.0*sigmaE);
 			double ERmax = *std::max_element( ERmaxV.begin(), ERmaxV.end() );
 		//Numerical integration with trapezoidal rule
 			double integral_old=1.0;
 			double integral_new=0.0;
 			double error;
 			double interval = ERmax-ERmin;
-			double dER = interval;
+			double dER = interval/10;
 			double Dev=100.0*abs(integral_old-integral_new)/abs(integral_old);
 			while(Dev>minDev)
 			{
+
 				dER/=2;
 				integral_old=integral_new;
 				int n = ceil(interval/dER);
@@ -166,7 +172,7 @@
 					double response=DetectorResponse(ER,E);
 					std::vector<double> dRo = dRdEMC(ER,drdehistoO);
 					std::vector<double> dRca = dRdEMC(ER,drdehistoCa);					
-					std::vector<double> dRw = dRdEMC(ER,drdehistoW);					
+					std::vector<double> dRw = dRdEMC(ER,drdehistoW);
 					sum 			+=	response*(dRo[0]+dRca[0]+dRw[0]);
 					UpperBoundSum 	+=	response*(dRo[1]+dRca[1]+dRw[1]);
 				}
@@ -178,12 +184,11 @@
 				std::vector<double> dRmaxW = dRdEMC(ERmax,drdehistoW);
 				integral_new=	dER*( DetectorResponse(ERmin,E)*(dRminO[0]/2.0+dRminCa[0]/2.0+dRminW[0]/2.0)+DetectorResponse(ERmax,E)*(dRmaxO[0]/2.0+dRmaxCa[0]/2.0+dRmaxW[0]/2.0) +sum);
 				error=			dER*( DetectorResponse(ERmin,E)*(dRminO[1]/2.0+dRminCa[1]/2.0+dRminW[1]/2.0)+DetectorResponse(ERmax,E)*(dRmaxO[1]/2.0+dRmaxCa[1]/2.0+dRmaxW[1]/2.0) +UpperBoundSum);
-	
-				Dev=100.0*abs(integral_old-integral_new)/abs(integral_old);
+				Dev=100.0*abs(integral_old-integral_new)/abs(integral_old);			
 			}
 		output.push_back(integral_new);
 		output.push_back(error);
-			return output;
+		return output;
 	}
 
 	std::vector<double> R_CRESSTII_MC(std::vector<std::vector<double>> &drdehistoO,std::vector<std::vector<double>> &drdehistoCa,std::vector<std::vector<double>> &drdehistoW,double mChi,double vE)

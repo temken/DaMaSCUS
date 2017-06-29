@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
 						std::vector<std::vector<double>> dRdEH_O = dRdEHistogram(0.22,16,rho[i],mChi,sigma,etaH);
 						std::vector<std::vector<double>> dRdEH_Ca = dRdEHistogram(0.14,40,rho[i],mChi,sigma,etaH);
 						std::vector<std::vector<double>> dRdEH_W = dRdEHistogram(0.64,184,rho[i],mChi,sigma,etaH);
-					//Save dRdE histograms for CRESST-II	
+					 //Save dRdE histograms for CRESST-II	
 						f.open("../results/"+SimID+"_histograms/dRdE."+std::to_string(i));
 						//Emin and Emax for the histogram
 							double Emin=0.3*keV;
@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
 							}
 						//Compute result for MC
 							std::vector<double> R_MC = R_CRESSTII_MC(dRdEH_O,dRdEH_Ca,dRdEH_W,mChi,vEarth.norm());;
-							//cout <<"MPI Process:\t" <<myRank <<"\t IsoRing:\t" <<i<<"\tR = "<<R_MC[0] <<"+-"<<R_MC[1] <<"\t("<<R_A<<")"<<endl;
+							// cout <<"MPI Process:\t" <<myRank <<"\t IsoRing:\t" <<i<<"\tR = "<<R_MC[0] <<"+-"<<R_MC[1] <<"\t("<<R_A<<")"<<endl;
 					//Save rate including the analytic result for the transparent earth
 						TotalRate.push_back(i);
 						TotalRate.push_back(R_MC[0]);
