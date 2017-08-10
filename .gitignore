@@ -1,12 +1,24 @@
 *.DS_Store
+.depend
+
+#Ignore
 *.sublime-project
 *.sublime-workspace
-*.o
-.depend
+
+#Ignore results and output files
 *.log
 *.speed
 *.rho
 *.LUX
 *.CRESST-II
 
+# Ignore build files
+build/*
+*.o
+
+# Ignore third party header files
+include/*
+
+# Ignore executables
+bin/*
 
