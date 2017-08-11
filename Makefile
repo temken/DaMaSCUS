@@ -1,26 +1,54 @@
-appname := DaMaSCUS_simulation
 
+
+#Compiler and compiler flags
 CXX := mpic++
-CXXFLAGS := -Wall -std=c++11 -I /path/to/libraries/ -O2 -lconfig++
+CXXFLAGS := -Wall -std=c++11  -O2 
+LIB := -lconfig++
+INC := -I /include/
 
-srcfiles := $(shell find . -name "*.cpp")
-objects  := $(patsubst %.cpp, %.o, $(srcfiles))
+#Directories
+SRCDIR := src/simulation
+BUILDDIR := build/simulation
+TARGETDIR := bin
+TESTDIR := test
 
-all: $(appname)
+#Target
+TARGET = $(TARGETDIR)/DaMaSCUS-Simulator 
 
-$(appname): $(objects)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $(appname) $(objects) $(LDLIBS)
+#Source files
+SRCEXT := cpp
+# COMMONSRC := $(shell find $(SRCDIR) -type f -name ./*.$(SRCEXT))
+SIMSRC :=$(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
+#$(shell find $(SRCDIR)/simulation -type f -name *.$(SRCEXT))
 
-depend: .depend
+#Object files
+SIMOBJ := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SIMSRC:.$(SRCEXT)=.o))
 
-.depend: $(srcfiles)
-	rm -f ./.depend
-	$(CXX) $(CXXFLAGS) -MM $^>>./.depend;
+all: $(TARGET)
+
+$(TARGET): $(SIMOBJ)
+	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $(TARGET) $^
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	$(CXX) $(CXXFLAGS) $(INC) -c -o $@ $<
+
+
+
+# 	# $(CXXFLAGS) $(INC) $(LDFLAGS) -o $@ $(SIMOBJ) $(LDLIBS)
+
+
+# depend: .depend
+
+# .depend: $(SIMOBJ)
+# 	rm -f ./.depend
+# 	$(CXX) $(CXXFLAGS) -MM $^>>./.depend;
 
 clean:
-	rm -f $(objects)
+	rm -f $(SIMOBJ) $(TARGET)
 
-dist-clean: clean
-	rm -f *~ .depend
+.PHONY: clean
 
-include .depend
+# dist-clean: clean
+# 	rm -f *~ .depend
+
+# include .depend
