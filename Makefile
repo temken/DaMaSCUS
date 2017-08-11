@@ -18,7 +18,7 @@ TARGETS = $(TARGETDIR)/DaMaSCUS-Simulator $(TARGETDIR)/DaMaSCUS-Analyzer
 SRCEXT := cpp
 COMMONSRC := $(shell find $(SRCDIR) -type f -name '*.$(SRCEXT)' -maxdepth 1)
 SIMSRC :=$(COMMONSRC) $(shell find $(SRCDIR)/simulation -type f -name *.$(SRCEXT))
-ANASRC :=$(shell find $(SRCDIR)/analysis -type f -name *.$(SRCEXT))
+ANASRC :=$(COMMONSRC) $(shell find $(SRCDIR)/analysis -type f -name *.$(SRCEXT))
 
 #Object files
 SIMOBJ := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SIMSRC:.$(SRCEXT)=.o))

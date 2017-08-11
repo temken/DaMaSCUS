@@ -45,6 +45,7 @@ int main(int argc, char *argv[])
 	//Initialize Logfile and create folders for inputfiles
 		if(myRank==0)
 		{
+			Copy_Config_File(argv[1]);
 			std::chrono::time_point<std::chrono::system_clock> start;
 			start = std::chrono::system_clock::now();
 			std::time_t start_time = std::chrono::system_clock::to_time_t(start);
