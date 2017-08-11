@@ -268,6 +268,50 @@ using namespace libconfig;
 		}
 
 
+//Area of isodetection rings
+	double IsoDetectionRing_Area(int theta,double depth)
+	{
+		return 2*M_PI*pow(rEarth-depth,2)*(cos(theta*deg)-cos((theta+1)*deg));
+	}
+
+
+std::vector< std::vector<double>> DM_EnergyDensity(long double w0[],int long long unsigned n0total,long double w[],int unsigned long long ntotal,long double w0sq[],long double wsq[])
+{
+	std::vector<std::vector<double>> output;
+		for(int i=0;i<180;i++)
+		{
+			double dens=1.0*(w[i]/ntotal)/(w0[i]/n0total)*rhoDM;
+			double variance = pow(dens/w[i],2.0)*wsq[i] +pow(dens/w0[i],2.0)*w0sq[i]; 
+			std::vector <double> buf;
+			buf.push_back(dens);
+			buf.push_back(sqrt(variance));
+			output.push_back(buf);
+		}
+		return output;
+}
+
+
+extern std::vector< std::vector<double>> DM_NumberDensity(double mDM,std::vector<std::vector<double>> density)
+{
+	for(unsigned int i=0;i<density.size();i++)
+	{
+		density[i][0]/=mDM;
+		density[i][1]/=mDM;
+	}
+	return density;
+}
+
+
+
+//Average density over all isodetection rings
+	double DM_AverageDensity(std::vector<std::vector<double>> density,double depth)
+	{
+		double TotalArea=4*M_PI*pow(rEarth-depth,2);
+		double sum=0.0;
+		for(int i=0;i<180;i++) 
+			sum+= density[i][0]*IsoDetectionRing_Area(i,depth)/TotalArea;
+		return sum;
+	}
 
 
 

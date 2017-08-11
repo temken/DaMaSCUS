@@ -3,7 +3,7 @@
 CXX := mpic++
 CXXFLAGS := -Wall -std=c++11  -O2 
 LIB := -lconfig++
-INC := -I /include/
+INC := -I include
 
 #Directories
 SRCDIR := src
@@ -11,14 +11,13 @@ BUILDDIR := build
 TARGETDIR := bin
 TESTDIR := test
 
-#Target
-# TARGET = $(TARGETDIR)/DaMaSCUS-Simulator
+#Targets
 TARGETS = $(TARGETDIR)/DaMaSCUS-Simulator $(TARGETDIR)/DaMaSCUS-Analyzer
 
 #Source files
 SRCEXT := cpp
-# COMMONSRC := $(shell find $(SRCDIR) -type f -name ./*.$(SRCEXT))
-SIMSRC :=$(shell find $(SRCDIR)/simulation -type f -name *.$(SRCEXT))
+COMMONSRC := $(shell find $(SRCDIR) -type f -name '*.$(SRCEXT)' -maxdepth 1)
+SIMSRC :=$(COMMONSRC) $(shell find $(SRCDIR)/simulation -type f -name *.$(SRCEXT))
 ANASRC :=$(shell find $(SRCDIR)/analysis -type f -name *.$(SRCEXT))
 
 #Object files
@@ -42,14 +41,6 @@ $(TARGETDIR)/DaMaSCUS-Analyzer: $(ANAOBJ)
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $@ -c $<
 
-
-
 clean:
 	rm -f $(SIMOBJ) $(ANAOBJ) $(TARGETS)
 
-
-
-# dist-clean: clean
-# 	rm -f *~ .depend
-
-# include .depend
