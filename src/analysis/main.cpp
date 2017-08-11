@@ -27,7 +27,9 @@ int main(int argc, char *argv[])
 //INITIALIZATION 	
 ////////////////////////////////////////////////////////////
 	//Read config file created by the simulation code. argv is the SimID
-		Read_Config_File(argv[1]);
+		std::string id(argv[1]);
+		std::string path = "../data/"+id+".cfg";
+		Read_Config_File(path.c_str());
 	//MPI Enviroment
 		// Initialize the MPI environment
 	    	MPI_Init(NULL, NULL);
@@ -289,9 +291,9 @@ int main(int argc, char *argv[])
 				if(experiment=="CRESST-II")
 				{
 					//Create Recoil Spectrum Histograms
-						std::vector<std::vector<double>> dRdEH_O = dRdEHistogram(0.22,16,rho[i],mChi,sigma,etaH);
-						std::vector<std::vector<double>> dRdEH_Ca = dRdEHistogram(0.14,40,rho[i],mChi,sigma,etaH);
-						std::vector<std::vector<double>> dRdEH_W = dRdEHistogram(0.64,184,rho[i],mChi,sigma,etaH);
+						std::vector<std::vector<double>> dRdEH_O = dRdEHistogram(0.22,16,rho[i],mChi,sigma0,etaH);
+						std::vector<std::vector<double>> dRdEH_Ca = dRdEHistogram(0.14,40,rho[i],mChi,sigma0,etaH);
+						std::vector<std::vector<double>> dRdEH_W = dRdEHistogram(0.64,184,rho[i],mChi,sigma0,etaH);
 					 //Save dRdE histograms for CRESST-II	
 						f.open("../results/"+SimID+"_histograms/dRdE."+std::to_string(i));
 						//Emin and Emax for the histogram
@@ -308,14 +310,14 @@ int main(int argc, char *argv[])
 						for(double E=0.3*keV;E<=Emax;E+=dE)
 						{
 							std::vector<double> dR = dRdE_CRESSTII_MC(E,dRdEH_O,dRdEH_Ca,dRdEH_W,vEarth.norm());
-							f <<E <<"\t" <<dR[0] <<"\t" <<dE/2.0<<"\t" <<dR[1] <<"\t" <<dRdE_CRESSTII_A(E,rhoDM,mChi,sigma,vEarth.norm()) <<endl; 
+							f <<E <<"\t" <<dR[0] <<"\t" <<dE/2.0<<"\t" <<dR[1] <<"\t" <<dRdE_CRESSTII_A(E,rhoDM,mChi,sigma0,vEarth.norm()) <<endl; 
 						}
 						f.close();
 					//Calculate Total event rate
 						//Compute the analytic result at the first iteration
 							if(i==iList[myRank])
 							{
-								R_A = R_CRESSTII_A(rhoDM,mChi,sigma,vEarth.norm());
+								R_A = R_CRESSTII_A(rhoDM,mChi,sigma0,vEarth.norm());
 							}
 						//Compute result for MC
 							std::vector<double> R_MC = R_CRESSTII_MC(dRdEH_O,dRdEH_Ca,dRdEH_W,mChi,vEarth.norm());;
@@ -331,13 +333,13 @@ int main(int argc, char *argv[])
 				else if(experiment=="LUX")
 				{
 					//Create and save dRdE-Histogram
-						std::vector<std::vector<double>> dRdEH = dRdEHistogram(1,131,rho[i],mChi,sigma,etaH);
+						std::vector<std::vector<double>> dRdEH = dRdEHistogram(1,131,rho[i],mChi,sigma0,etaH);
 						f.open("../results/"+SimID+"_histograms/dRdE."+std::to_string(i));
-						for(unsigned int j=0;j<dRdEH.size();j++) f<<dRdEH[j][0] <<"\t"<<dRdEH[j][1] <<"\t"<<dRdEH[j][2] <<"\t"<<dRdEH[j][3]<<"\t"<<dRdErA(dRdEH[j][0],1,131,rhoDM,mChi,sigma,vEarth.norm())<<endl;
+						for(unsigned int j=0;j<dRdEH.size();j++) f<<dRdEH[j][0] <<"\t"<<dRdEH[j][1] <<"\t"<<dRdEH[j][2] <<"\t"<<dRdEH[j][3]<<"\t"<<dRdErA(dRdEH[j][0],1,131,rhoDM,mChi,sigma0,vEarth.norm())<<endl;
 						f.close();
 					//Calculate Total event rate
 						//Compute the analytic result at the first iteration
-							if(i==iList[myRank]) R_A = R_LUX_A(rhoDM,mChi,sigma,vEarth.norm());
+							if(i==iList[myRank]) R_A = R_LUX_A(rhoDM,mChi,sigma0,vEarth.norm());
 								
 						//Compute the MC result
 							std::vector<double> R_MC = R_LUX_MC(dRdEH);
@@ -434,7 +436,7 @@ int main(int argc, char *argv[])
 				cout <<"\nProcessing Time:\t"<< durationTotal<<"s ("<< floor(durationTotal/3600.0)<<":"<<floor(fmod(durationTotal/60.0,60.0))<<":"<<floor(fmod(durationTotal,60.0))<<":"<<floor(fmod(1000*durationTotal,1000.0))<<")."<<endl
 				<<"##############################"<<endl;
 			//LogFile
-				LogAnalysis(durationTotal,numprocs);
+				LogFile_Analysis(durationTotal,numprocs);
 				
 		}	
 	// Finalize the MPI environment.

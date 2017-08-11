@@ -5,9 +5,6 @@
 #include <vector>
 
 
-#include "General_Utilities.hpp"
-
-
 using namespace std;
 
 
@@ -71,13 +68,7 @@ using namespace std;
 //Earth's Velocity in the galactic frame
 	extern Eigen::Vector3d EarthVelocity(double n=0.0);
 
-
 	
-//DM Density
-	extern double IsoDetectionRing_Area(int theta,double depth=Detector_Depth);
-	extern vector< vector<double>> DM_EnergyDensity(long double w0[],int long long unsigned n0total,long double w[],int unsigned long long ntotal,long double w0sq[],long double wsq[]);
-	extern vector< vector<double>> DM_NumberDensity(double mDM,vector<vector<double>> density);
-	extern double DM_AverageDensity(vector<vector<double>> density,double depth=Detector_Depth);
 #endif
 
 
