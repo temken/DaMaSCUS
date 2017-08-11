@@ -1,5 +1,4 @@
 
-
 #Compiler and compiler flags
 CXX := mpic++
 CXXFLAGS := -Wall -std=c++11  -O2 
@@ -7,46 +6,48 @@ LIB := -lconfig++
 INC := -I /include/
 
 #Directories
-SRCDIR := src/simulation
-BUILDDIR := build/simulation
+SRCDIR := src
+BUILDDIR := build
 TARGETDIR := bin
 TESTDIR := test
 
 #Target
-TARGET = $(TARGETDIR)/DaMaSCUS-Simulator 
+# TARGET = $(TARGETDIR)/DaMaSCUS-Simulator
+TARGETS = $(TARGETDIR)/DaMaSCUS-Simulator $(TARGETDIR)/DaMaSCUS-Analyzer
 
 #Source files
 SRCEXT := cpp
 # COMMONSRC := $(shell find $(SRCDIR) -type f -name ./*.$(SRCEXT))
-SIMSRC :=$(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
-#$(shell find $(SRCDIR)/simulation -type f -name *.$(SRCEXT))
+SIMSRC :=$(shell find $(SRCDIR)/simulation -type f -name *.$(SRCEXT))
+ANASRC :=$(shell find $(SRCDIR)/analysis -type f -name *.$(SRCEXT))
 
 #Object files
 SIMOBJ := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SIMSRC:.$(SRCEXT)=.o))
+ANAOBJ := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(ANASRC:.$(SRCEXT)=.o))
 
-all: $(TARGET)
+.PHONY: all simulator analyzer clean
 
-$(TARGET): $(SIMOBJ)
-	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $(TARGET) $^
+all: $(TARGETS)
+
+simulator: $(TARGETDIR)/DaMaSCUS-Simulator
+
+analyzer: $(TARGETDIR)/DaMaSCUS-Analyzer
+
+$(TARGETDIR)/DaMaSCUS-Simulator: $(SIMOBJ)
+	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $@ $^
+
+$(TARGETDIR)/DaMaSCUS-Analyzer: $(ANAOBJ)
+	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $@ $^
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
-	$(CXX) $(CXXFLAGS) $(INC) -c -o $@ $<
+	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $@ -c $<
 
 
-
-# 	# $(CXXFLAGS) $(INC) $(LDFLAGS) -o $@ $(SIMOBJ) $(LDLIBS)
-
-
-# depend: .depend
-
-# .depend: $(SIMOBJ)
-# 	rm -f ./.depend
-# 	$(CXX) $(CXXFLAGS) -MM $^>>./.depend;
 
 clean:
-	rm -f $(SIMOBJ) $(TARGET)
+	rm -f $(SIMOBJ) $(ANAOBJ) $(TARGETS)
 
-.PHONY: clean
+
 
 # dist-clean: clean
 # 	rm -f *~ .depend
