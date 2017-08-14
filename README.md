@@ -20,19 +20,23 @@ DaMaSCUS Version 1.0 06/06/2016
 
 The included folders are:
 
-- `analysis`: This folder contains the relevant header and cpp files of the analysis code, which reads in the raw data from the data-folder and computes all relevant results, which then get stored in the results-folder.
+- `bin`: After successful compilation this folder contains two executables as well as the configuration file.
+- `build`: This folder contains all object files and is emptied by "make clean".
 - `data`: Once a simulation run is performed, the generated data will be stored here.
+- `include`: The DaMaSCUS header files are stored here. Necessary 3rd party libraries can also be placed here.
 - `plots`: To visualize the results, created by the analysis module we include the small Mathematica package "DaMaSCUStoolbox" and an example notebook creating and saving plots.
 - `results`: The analysis module saves its results and histograms here.
-- `simulation`: This folder contains the simulation code and is the core of DaMaSCUS. You will find the relevant header and cpp files, together with the config file of input parameters.
+- `src`: All the source code files of the two DaMaSCUS modules can be found here.
+
 
 
 ## INSTALLATION AND USAGE
 
-For installation and usage we refer to the manual.
+For installation and usage we refer to the documentation.
 
 ## Updates
 The code will be updated continuously. Here I list only important updates and major bug fixes 
+- `xx.08.2017`: Release of v1.0.2: Re-structuring of the folder structure and new documentation.
 - `15.06.2017`: Release of v1.0.1: major bug fix concerning mostly very high cross-sections.
 - `06.06.2017`: Release of v1.0
 
