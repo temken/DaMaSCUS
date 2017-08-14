@@ -39,6 +39,8 @@ $(TARGETDIR)/DaMaSCUS-Analyzer: $(ANAOBJ)
 	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $@ $^
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
+	@mkdir -p $(BUILDDIR)/simulation/
+	@mkdir -p $(BUILDDIR)/analysis/
 	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $@ -c $<
 
 clean:
