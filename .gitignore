@@ -15,7 +15,6 @@
 # Ignore build files
 build/*
 *.o
-docs/build/*
 
 # Ignore third party header files
 include/*
