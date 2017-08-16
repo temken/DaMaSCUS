@@ -5,6 +5,10 @@
    :alt: alternate text
    :align: left
 
+.. image:: https://readthedocs.org/projects/damascus/badge/?version=latest
+	:target: http://damascus.readthedocs.io/en/latest/?badge=latest
+	:alt: Documentation Status
+	
 ==================================================================
 DaMaSCUS - Dark Matter Simulation Code for Underground Simulations
 ==================================================================
