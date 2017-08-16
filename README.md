@@ -10,25 +10,13 @@ DaMaSCUS Version 1.0 06/06/2016
 
 ## GENERAL NOTES
 
+For the underlying physics we refer to the paper [arXiv:1706.02249](https://arxiv.org/abs/1706.02249).
+
 - DaMaSCUS is a MC simulator of dark matter particles as they move through the Earth and scatter on terrestrial nuclei. 
 - It allows to compute the local distortions of the DM phase space caused by collisions with nuclei. 
 - The thusly distorted distribution functions and densities are used to give precise estimates of time-dependent signal rates for direct detection experiments and diurnal modulations.
 - A full, realistic model of the Earth is implemented as well as the Earth's time-dependent velocity and orientation in the galactic frame.
 - DaMaSCUS is written in C++ and fully parallelized (openMPI).
-
-## CONTENT
-
-The included folders are:
-
-- `bin`: After successful compilation this folder contains two executables as well as the configuration file.
-- `build`: This folder contains all object files and is emptied by "make clean".
-- `data`: Once a simulation run is performed, the generated data will be stored here.
-- `include`: The DaMaSCUS header files are stored here. Necessary 3rd party libraries can also be placed here.
-- `plots`: To visualize the results, created by the analysis module we include the small Mathematica package "DaMaSCUStoolbox" and an example notebook creating and saving plots.
-- `results`: The analysis module saves its results and histograms here.
-- `src`: All the source code files of the two DaMaSCUS modules can be found here.
-
-
 
 ## INSTALLATION AND USAGE
 
@@ -36,10 +24,9 @@ For installation and usage we refer to the documentation.
 
 ## Updates
 The code will be updated continuously. Here I list only important updates and major bug fixes 
-- `xx.08.2017`: Release of v1.0.2: Re-structuring of the folder structure and new documentation.
+- `16.08.2017`: Release of v1.0.2: Re-structuring of the folder structure and new documentation.
 - `15.06.2017`: Release of v1.0.1: major bug fix concerning mostly very high cross-sections.
 - `06.06.2017`: Release of v1.0
-
 
 ## CITING DaMaSCUS
 
