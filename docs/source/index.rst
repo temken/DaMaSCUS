@@ -27,7 +27,7 @@ Authors: `Timon Emken <http://cp3-origins.dk/people/staff/emken>`_ & `Chris Kouv
 * A full, realistic model of the Earth is implemented as well as the Earth's time-dependent velocity and orientation in the galactic frame.
 * DaMaSCUS is written in C++ and fully parallelized (openMPI).
 
-For the underlying physics check out the `paper <https://arxiv.org/abs/1706.02249>`_ .
+For the underlying physics check out the `paper <https://arxiv.org/abs/1706.02249>`_ . For the code visit the `repository <https://github.com/temken/DaMaSCUS>`_ .
 
 
 .. toctree::
