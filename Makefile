@@ -9,7 +9,6 @@ INC := -I include
 SRCDIR := src
 BUILDDIR := build
 TARGETDIR := bin
-TESTDIR := test
 
 #Targets
 TARGETS = $(TARGETDIR)/DaMaSCUS-Simulator $(TARGETDIR)/DaMaSCUS-Analyzer
