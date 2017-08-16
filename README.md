@@ -1,3 +1,7 @@
+<a href='http://damascus.readthedocs.io/en/latest/?badge=latest'>
+    <img src='https://readthedocs.org/projects/damascus/badge/?version=latest' alt='Documentation Status' />
+</a>
+
 # DaMaSCUS
 
 Dark Matter Simulation Code for Underground Scatterings
@@ -20,7 +24,7 @@ For the underlying physics we refer to the paper [arXiv:1706.02249](https://arxi
 
 ## INSTALLATION AND USAGE
 
-For installation and usage we refer to the documentation.
+For installation and usage we refer to the [documentation](http://damascus.readthedocs.io/en/latest/).
 
 ## Updates
 The code will be updated continuously. Here I list only important updates and major bug fixes 
