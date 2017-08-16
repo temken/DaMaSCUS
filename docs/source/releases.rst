@@ -8,4 +8,8 @@ The code is under continuous development and will be extended and updated over t
 	* Complete restructuring of the DaMaSCUS directories to a more clear and standard format.
 	* New documentation page to replace the pdf manual.
 
+* 15.06.2017: Release of v1.0.1.
+
+	* major bug fix concerning mostly very high cross-sections.
+
 * 06.06.2017: Release of version 1.0.

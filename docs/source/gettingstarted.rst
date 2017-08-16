@@ -37,15 +37,26 @@ To download it via git simply run
 
 	$ git clone https://github.com/temken/DaMaSCUS/
 
-in your console or terminal. You will now find the following folders in your destination directory:
+in your console or terminal. 
 
-* bin
-* build
-* data
-* include
-* plots
-* results
-* src
+^^^^^^^^^^^^^^^^
+Folder Structure
+^^^^^^^^^^^^^^^^
+
+You will now find the following folders in your destination directory:
+
+* **/bin/**: After successful compilation this folder contains two executables as well as the configuration file.
+* **/build/**: This folder contains all object files. Both the object files and the executables in **/bin/** are deleted via 
+
+.. code-block:: bash
+
+	$ make clean
+
+* **/data/**: Once a simulation run is performed, the generated data will be stored here
+* **/include/**: The DaMaSCUS header files are stored here. Necessary 3rd party libraries can also be placed here.
+* **/plots/**: To visualize the results, created by the analysis module we include the small Mathematica package *DaMaSCUStoolbox* and an example notebook creating and saving plots.
+* **/results/**: The analysis module saves its results and histograms here.
+* **/src/**: All the source code files of the two DaMaSCUS modules can be found here.
 
 ------------
 Installation

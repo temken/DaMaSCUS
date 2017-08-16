@@ -32,10 +32,10 @@ For the underlying physics check out the `paper <https://arxiv.org/abs/1706.0224
 
    gettingstarted
    usage
-   contact
    citation
    releases
    licence
+   contact
 
 =============
 Visualization
@@ -64,18 +64,13 @@ Evolution of Isodetection Rings
    :alt: alternate text
    :align: left
 
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
-|
+=================
+Contact & Support
+=================
+
+For questions, bug reports or other suggestions please contact
+
+	`Timon Emken <http://cp3-origins.dk/people/staff/emken>`_ (emken@cp3.sdu.dk)
 
 
 .. Indices and tables
