@@ -8,6 +8,8 @@
 .. image:: https://readthedocs.org/projects/damascus/badge/?version=latest
 	:target: http://damascus.readthedocs.io/en/latest/?badge=latest
 	:alt: Documentation Status
+.. image:: https://travis-ci.org/temken/DaMaSCUS.svg?branch=master
+	:target: https://travis-ci.org/temken/DaMaSCUS
 	
 ==================================================================
 DaMaSCUS - Dark Matter Simulation Code for Underground Simulations
