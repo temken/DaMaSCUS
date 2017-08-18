@@ -32,10 +32,10 @@ simulator: $(TARGETDIR)/DaMaSCUS-Simulator
 analyzer: $(TARGETDIR)/DaMaSCUS-Analyzer
 
 $(TARGETDIR)/DaMaSCUS-Simulator: $(SIMOBJ)
-	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $@ $^
+	$(CXX) $(CXXFLAGS) $(INC) -o $@ $^ $(LIB)
 
 $(TARGETDIR)/DaMaSCUS-Analyzer: $(ANAOBJ)
-	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $@ $^
+	$(CXX) $(CXXFLAGS) $(INC) -o $@ $^ $(LIB)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)/simulation/

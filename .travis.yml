@@ -27,10 +27,6 @@ install:
   - sudo apt-get install openmpi-bin
   - sudo apt-get install libopenmpi-dev
 
-  #Updates
-  - sudo apt-get update
-  - sudo apt-get upgrade
-
 
 addons:
   apt:
@@ -41,9 +37,6 @@ addons:
     - g++-4.8
     - clang
 script:
-  - mpic++ --showme
-  - mpirun --version
-  - g++ --version
   - make
   - cd bin/
   - mpirun -n 2 DaMaSCUS-Simulator DaMaSCUS.cfg
