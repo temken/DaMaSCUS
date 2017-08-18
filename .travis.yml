@@ -27,6 +27,10 @@ install:
   - sudo apt-get install openmpi-bin
   - sudo apt-get install libopenmpi-dev
 
+  #Updates
+  - sudo apt-get update
+  - sudo apt-get upgrade
+
 
 addons:
   apt:
