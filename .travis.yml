@@ -18,6 +18,7 @@ before_install:
 install:
   #Install Eigen
   - sudo apt-get install libeigen3-dev
+  - sudo ln -s /usr/include/eigen3/Eigen /usr/local/include/Eigen
 
   #Install libconfig
   - sudo apt-get install libconfig++-dev
@@ -35,6 +36,7 @@ addons:
     - g++-4.8
     - clang
 script:
+  - mpic++ --showme
   - make
   - cd bin/
   - mpirun -n 2 DaMaSCUS-Simulator DaMaSCUS.cfg

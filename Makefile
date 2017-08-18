@@ -3,7 +3,7 @@
 CXX := mpic++
 CXXFLAGS := -Wall -std=c++11  -O2 
 LIB := -lconfig++
-INC := -I include -I/usr/include/eigen3
+INC := -I include
 
 #Directories
 SRCDIR := src
