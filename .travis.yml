@@ -26,6 +26,8 @@ install:
   #Install openMPI
   - sudo apt-get install openmpi-bin
   - sudo apt-get install libopenmpi-dev
+  - apt-cache policy openmpi-bin
+  - apt-cache policy libopenmpi-dev
 
 addons:
   apt:
