@@ -1,6 +1,6 @@
-<a href='http://damascus.readthedocs.io/en/latest/?badge=latest'>
-    <img src='https://readthedocs.org/projects/damascus/badge/?version=latest' alt='Documentation Status' />
-</a>
+
+[![Documentation Status](https://readthedocs.org/projects/damascus/badge/?version=latest)](http://damascus.readthedocs.io/en/latest/?badge=latest)
+[![Build Status](https://travis-ci.org/temken/DaMaSCUS.svg?branch=master)](https://travis-ci.org/temken/DaMaSCUS)
 
 # DaMaSCUS
 
