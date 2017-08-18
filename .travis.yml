@@ -7,8 +7,6 @@ compiler:
   - clang
 os:
   - linux
-env:
-  - openmpi
 
 before_install:
   - test -n $CC  && unset CC
@@ -23,6 +21,9 @@ install:
 
   #Install libconfig
   - sudo apt-get install libconfig++-dev
+
+  #Install openMPI
+  - sudo apt-get install openmpi-bin
 
 addons:
   apt:
