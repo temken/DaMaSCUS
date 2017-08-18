@@ -1,20 +1,30 @@
 language: c++
+
 sudo: required
 
 compiler:
   - gcc
   - clang
+os:
+  - linux
 
 before_install:
   - test -n $CC  && unset CC
   - test -n $CXX && unset CXX
 
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get -qq update
 
 install:
+  #Install Eigen
   - sudo apt-get install libeigen3-dev
+
+  #Install libconfig
   - sudo apt-get install libconfig++-dev
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+
+  #Install open MPI
+  - sudo apt-get install openmpi-bin openmpi-common openssh-client openssh-server libopenmpi1.3 libopenmpi-dbg libopenmpi-dev
+
 addons:
   apt:
     sources:
