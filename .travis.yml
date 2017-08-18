@@ -26,8 +26,7 @@ install:
   #Install openMPI
   - sudo apt-get install openmpi-bin
   - sudo apt-get install libopenmpi-dev
-  - apt-cache policy openmpi-bin
-  - apt-cache policy libopenmpi-dev
+
 
 addons:
   apt:
@@ -39,6 +38,7 @@ addons:
     - clang
 script:
   - mpic++ --showme
+  - g++ --version
   - make
   - cd bin/
   - mpirun -n 2 DaMaSCUS-Simulator DaMaSCUS.cfg
