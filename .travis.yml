@@ -38,6 +38,7 @@ addons:
     - clang
 script:
   - mpic++ --showme
+  - mpirun --version
   - g++ --version
   - make
   - cd bin/
