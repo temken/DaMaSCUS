@@ -92,25 +92,25 @@ int main(int argc, char *argv[])
  	  	MPI_Status status;
  	  	//Speed output
 		 	string SpeedFilename="../results/"+SimID+".speedTemp";
-		 	int test=MPI_File_open(MPI_COMM_WORLD,SpeedFilename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_speed);
+		 	int test=MPI_File_open(MPI_COMM_WORLD,const_cast<char*>(SpeedFilename.c_str()),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_speed);
 		    //if it already exists, it will be overwritten!
 			if(test != MPI_SUCCESS)
 			{
-	  			if (myRank == 0) MPI_File_delete(SpeedFilename.c_str(),MPI_INFO_NULL);
+	  			if (myRank == 0) MPI_File_delete(const_cast<char*>(SpeedFilename.c_str()),MPI_INFO_NULL);
 	  			//MPI_Barrier(MPI_COMM_WORLD);
-		  		test=MPI_File_open(MPI_COMM_WORLD,SpeedFilename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_speed);
+		  		test=MPI_File_open(MPI_COMM_WORLD,const_cast<char*>(SpeedFilename.c_str()),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_speed);
 		  	}
 		  	//Offset for (ring,vMean,vError)
 	   		offset = iList[myRank] * 3 * sizeof(double);
 	  		MPI_File_seek(file_speed, offset,MPI_SEEK_SET);
 	  	//Event rate output
 	  		string RateFilename="../results/"+SimID+".rateTemp";
-	 		test=MPI_File_open(MPI_COMM_WORLD,RateFilename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_rate);
+	 		test=MPI_File_open(MPI_COMM_WORLD,const_cast<char*>(RateFilename.c_str()),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_rate);
 		   	//if it already exists, it will be overwritten!
 				if(test != MPI_SUCCESS)
 				{
-		 				if (myRank == 0) MPI_File_delete(RateFilename.c_str(),MPI_INFO_NULL);
-		  			test=MPI_File_open(MPI_COMM_WORLD,RateFilename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_rate);
+		 				if (myRank == 0) MPI_File_delete(const_cast<char*>(RateFilename.c_str()),MPI_INFO_NULL);
+		  			test=MPI_File_open(MPI_COMM_WORLD,const_cast<char*>(RateFilename.c_str()),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_rate);
 		  		}
 		 		//Offset for (ring,rate,error,analytic rate)
 	   			offset = iList[myRank] * 4 * sizeof(double);
@@ -180,9 +180,9 @@ int main(int argc, char *argv[])
 				MPI_Status status;
 				string VelocityFilename="../data/"+SimID+"_data/velocity."+std::to_string(i);
 				string WeightFilename="../data/"+SimID+"_data/weights."+std::to_string(i);
-				int rc = MPI_File_open(MPI_COMM_SELF, VelocityFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &VelocityFile );
+				int rc = MPI_File_open(MPI_COMM_SELF, const_cast<char*>(VelocityFilename.c_str()), MPI_MODE_RDONLY, MPI_INFO_NULL, &VelocityFile );
 				if (rc) cout <<"Unable to read file " <<VelocityFilename <<"."<<endl;
-				rc = MPI_File_open(MPI_COMM_SELF, WeightFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &WeightFile );
+				rc = MPI_File_open(MPI_COMM_SELF, const_cast<char*>(WeightFilename.c_str()), MPI_MODE_RDONLY, MPI_INFO_NULL, &WeightFile );
 				if (rc) cout <<"Unable to read file " <<WeightFilename <<"."<<endl;
 
 			//First we calculate the histogram domain, the weighted speed average, variance and standard error. 
@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
 			//Binary Input files
 			//Speed
 				MPI_File speedfile;
-				int rc = MPI_File_open(MPI_COMM_SELF, SpeedFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &speedfile );
+				int rc = MPI_File_open(MPI_COMM_SELF, const_cast<char*>(SpeedFilename.c_str()), MPI_MODE_RDONLY, MPI_INFO_NULL, &speedfile );
 				if (rc) cout <<"Unable to read file " <<SpeedFilename <<"."<<endl;
 				//ASCII Output files
 					ofstream f;
@@ -401,7 +401,7 @@ int main(int argc, char *argv[])
 				if(experiment!="None")
 				{
 					MPI_File ratefile;
-					rc = MPI_File_open(MPI_COMM_SELF, RateFilename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &ratefile );
+					rc = MPI_File_open(MPI_COMM_SELF, const_cast<char*>(RateFilename.c_str()), MPI_MODE_RDONLY, MPI_INFO_NULL, &ratefile );
 					if (rc) cout <<"Unable to read file " <<RateFilename <<"."<<endl;
 					//ASCII Output files
 						ofstream g;
@@ -428,8 +428,8 @@ int main(int argc, char *argv[])
 		{
 			//Delete temporary files
 				cout <<"Delete temporary files and finish." <<endl;
-				MPI_File_delete(SpeedFilename.c_str(),MPI_INFO_NULL);
-				MPI_File_delete(RateFilename.c_str(),MPI_INFO_NULL);
+				MPI_File_delete(const_cast<char*>(SpeedFilename.c_str()),MPI_INFO_NULL);
+				MPI_File_delete(const_cast<char*>(RateFilename.c_str()),MPI_INFO_NULL);
 			//Ending time and computing time
 				tEnd = high_resolution_clock::now();
 				double durationTotal =1e-6*duration_cast<microseconds>( tEnd - tStart ).count();

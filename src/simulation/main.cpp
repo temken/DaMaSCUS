@@ -173,26 +173,26 @@ int main(int argc, char *argv[])
  		   	{
  		   		//Velocity output files
 	 		   		string filename="../data/"+SimID+"_data/velocity."+std::to_string(i);
-	 		   		int test=MPI_File_open(MPI_COMM_WORLD,filename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_Velocity[i]);
+	 		   		int test=MPI_File_open(MPI_COMM_WORLD,const_cast<char*>(filename.c_str()),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_Velocity[i]);
 	 	   			//if it already exists, it will be overwritten!
 		    			if(test != MPI_SUCCESS)
 		    			{
-		    				if (myRank == 0) MPI_File_delete(filename.c_str(),MPI_INFO_NULL);
+		    				if (myRank == 0) MPI_File_delete(const_cast<char*>(filename.c_str()),MPI_INFO_NULL);
 		    				//MPI_Barrier(MPI_COMM_WORLD);
-		    				test=MPI_File_open(MPI_COMM_WORLD,filename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_Velocity[i]);
+		    				test=MPI_File_open(MPI_COMM_WORLD,const_cast<char*>(filename.c_str()),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_Velocity[i]);
 		    			}
 		    		//Offset
 		 		   		offset = myRank * Local_SampleSize_Velocity * sizeof(Eigen::Vector3d);
 				 		MPI_File_seek(file_Velocity[i], offset,MPI_SEEK_SET);
 			 	//Weights output files
 			 		filename="../data/"+SimID+"_data/weights."+std::to_string(i);
-	 		   		test=MPI_File_open(MPI_COMM_WORLD,filename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_Weights[i]);
+	 		   		test=MPI_File_open(MPI_COMM_WORLD,const_cast<char*>(filename.c_str()),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_Weights[i]);
 	 	   			//if it already exists, it will be overwritten!
 		    			if(test != MPI_SUCCESS)
 		    			{
-		    				if (myRank == 0) MPI_File_delete(filename.c_str(),MPI_INFO_NULL);
+		    				if (myRank == 0) MPI_File_delete(const_cast<char*>(filename.c_str()),MPI_INFO_NULL);
 		    				//MPI_Barrier(MPI_COMM_WORLD);
-		    				test=MPI_File_open(MPI_COMM_WORLD,filename.c_str(),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_Weights[i]);
+		    				test=MPI_File_open(MPI_COMM_WORLD,const_cast<char*>(filename.c_str()),MPI_MODE_CREATE|MPI_MODE_EXCL|MPI_MODE_WRONLY,MPI_INFO_NULL, &file_Weights[i]);
 		    			}
 		    		//Offset
 	 		   			offset = myRank * Local_SampleSize_Velocity * sizeof(double);
