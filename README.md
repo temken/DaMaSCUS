@@ -1,6 +1,7 @@
 
 [![Documentation Status](https://readthedocs.org/projects/damascus/badge/?version=latest)](http://damascus.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/temken/DaMaSCUS.svg?branch=master)](https://travis-ci.org/temken/DaMaSCUS)
+[![codecov](https://codecov.io/gh/temken/DaMaSCUS/branch/master/graph/badge.svg)](https://codecov.io/gh/temken/DaMaSCUS)
 
 # DaMaSCUS
 
