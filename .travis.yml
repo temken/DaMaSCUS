@@ -13,6 +13,7 @@ before_install:
 
   #Codecov
   - sudo pip install codecov
+  - chmod +x .get_code_cov.sh
 
   - test -n $CC  && unset CC
   - test -n $CXX && unset CXX
