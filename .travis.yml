@@ -40,8 +40,10 @@ script:
   #Compile without optimization and with coverage
   - make test
   #Run the program
+  - cd bin/
   - mpirun -n 1 /bin/DaMaSCUS-Simulator bin/.test.cfg
   - mpirun -n 1 /bin/DaMaSCUS-Analyzer Test
+  - cd ..
   #Codecov
   - ./.get_code_cov.sh
 
