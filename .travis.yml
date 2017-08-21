@@ -40,12 +40,10 @@ script:
   #Compile without optimization and with coverage
   - make test
   #Run the program
-  - cd bin/
-  - mpirun -n 1 DaMaSCUS-Simulator .test.cfg
-  - mpirun -n 1 DaMaSCUS-Analyzer Test
-  - cd ..
+  - mpirun -n 1 /bin/DaMaSCUS-Simulator bin/.test.cfg
+  - mpirun -n 1 /bin/DaMaSCUS-Analyzer Test
   #Codecov
-  - ./.get_code_cov
+  - ./.get_code_cov.sh
 
 after_success: 
   - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
