@@ -10,6 +10,8 @@
 	:alt: Documentation Status
 .. image:: https://travis-ci.org/temken/DaMaSCUS.svg?branch=master
 	:target: https://travis-ci.org/temken/DaMaSCUS
+.. image:: https://codecov.io/gh/temken/DaMaSCUS/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/temken/DaMaSCUS
 	
 ==================================================================
 DaMaSCUS - Dark Matter Simulation Code for Underground Simulations
