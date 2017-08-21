@@ -11,6 +11,9 @@ before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get -qq update
 
+  #Codecov
+  - sudo pip install codecov
+
   - test -n $CC  && unset CC
   - test -n $CXX && unset CXX
 
@@ -26,13 +29,21 @@ install:
   - sudo apt-get install openmpi-bin
   - sudo apt-get install libopenmpi-dev
 
+  #Codecov
+  - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-5 90
+
 script:
   - mpic++ --showme
   - mpic++ --version
-  - make
+  #Compile without optimization and with coverage
+  - make test
+  #Run the program
   - cd bin/
-  - mpirun -n 2 DaMaSCUS-Simulator DaMaSCUS.cfg
-  - mpirun -n 2 DaMaSCUS-Analyzer exampleID
+  - mpirun -n 1 DaMaSCUS-Simulator .test.cfg
+  - mpirun -n 1 DaMaSCUS-Analyzer Test
+  - cd ..
+  #Codecov
+  - make codecove
 
 after_success: 
-  - bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"

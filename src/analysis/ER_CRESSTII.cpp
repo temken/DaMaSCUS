@@ -141,7 +141,7 @@
 	{
 		std::vector<double> output;
 		double minDev=0.1;
-		int A[]={16,40,184};
+		// int A[]={16,40,184};
 		double sigmaE=62*eV;
 		double ERmin = 0;
 		//Find the max. recoil energy

@@ -11,16 +11,18 @@
 *.rho
 *.LUX
 *.CRESST-II
+data/*
+
+#Ignore executables
+bin/*
 
 # Ignore build files
-build/*
 *.o
 
-# Ignore third party header files
-include/*
-
-# Ignore executables
-bin/*
+# Ignore codecove files
+*.gcov
+*.gcda
+*.gcno
 
 
 
