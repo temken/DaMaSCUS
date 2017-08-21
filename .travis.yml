@@ -44,7 +44,7 @@ script:
   - mpirun -n 1 DaMaSCUS-Analyzer Test
   - cd ..
   #Codecov
-  - make codecove
+  - .get_code_cov
 
 after_success: 
   - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
