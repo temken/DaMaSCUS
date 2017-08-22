@@ -57,7 +57,7 @@ Simulation of a single DM particle
 	<video controls src="_static/Damascus_Single_Track.mp4"></video> 
 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Simulation of a multipe particles
+Simulation of a multiple particles
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. raw:: html
