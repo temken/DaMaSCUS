@@ -132,7 +132,7 @@ Next we can analyze the generated data by running
 
 	$ mpirun -n N DaMaSCUS-Analyzer SimulationID
 
-in your terminal from the **/bin/** directory. The analysis type is set inside the config file **/data/SimulationID.cfg** and can be adjusted after the simulation has finished. The terminal output  of a successful analysis looks like
+in your terminal from the **/bin/** directory. Again *N* is the number of MPI processes. The analysis type is set inside the config file **/data/SimulationID.cfg** and can be adjusted after the simulation has finished. The terminal output of a successful analysis looks like
 
 .. code-block:: guess
 

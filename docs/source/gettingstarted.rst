@@ -73,7 +73,7 @@ The code is compiled using the Makefile. You might have to adjust the first line
 
 	#Compiler and compiler flags
 	CXX := mpic++
-	CXXFLAGS := -Wall -std=c++11  -O2 
+	CXXFLAGS := -Wall -std=c++11 
 	LIB := -lconfig++
 	INC := -I include
 	(...)
@@ -84,7 +84,7 @@ to your local settings. Next to install DaMaSCUS and compile the code simply run
 
 	$ make
 
-in your terminal. Alternatively you can also run
+from the root directory in your terminal. Alternatively you can also run
 
 .. code-block:: bash
 

@@ -29,7 +29,7 @@ Authors: `Timon Emken <http://cp3-origins.dk/people/staff/emken>`_ & `Chris Kouv
 * It allows to compute the local distortions of the DM density and velocity distribution caused by collisions with nuclei. 
 * The distorted distribution functions and redistributed densities are used to give precise estimates of time-dependent signal rates for direct detection experiments and diurnal modulations.
 * A full, realistic model of the Earth is implemented as well as the Earth's time-dependent velocity and orientation in the galactic frame.
-* DaMaSCUS is written in C++ and fully parallelized (openMPI).
+* DaMaSCUS is written in C++ and fully parallelized (MPI).
 
 For the underlying physics check out the `paper <https://arxiv.org/abs/1706.02249>`_ . For the code visit the `repository <https://github.com/temken/DaMaSCUS>`_ .
 
