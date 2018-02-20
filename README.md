@@ -41,7 +41,7 @@ If you decide to use this code, please cite
 
 as well as the original publication,
 
->Emken, T. & Kouvaris, C., DaMaSCUS: The Impact of Underground Scatterings on Direct Detection of Light Dark Matter, (2017), [arXiv:1706.02249](https://arxiv.org/abs/1706.02249).
+>Emken, T. & Kouvaris, C., DaMaSCUS: The Impact of Underground Scatterings on Direct Detection of Light Dark Matter, [JCAP 1710 (2017) no.10, 031](http://iopscience.iop.org/article/10.1088/1475-7516/2017/10/031/meta), [arXiv:1706.02249](https://arxiv.org/abs/1706.02249).
 
 ## AUTHORS & CONTACT
 
@@ -50,6 +50,6 @@ The authors of DaMaSCUS are Timon Emken and Chris Kouvaris.
 For questions, bug reports or other suggestions please contact Timon Emken (emken@cp3.sdu.dk).
 
 
-## LICENCE
+## LICENSE
 
 This project is licensed under the MIT License - see the LICENSE file.
