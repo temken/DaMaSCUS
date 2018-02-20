@@ -37,11 +37,11 @@ The code will be updated continuously. Here I list only important updates and ma
 
 If you decide to use this code, please cite
 
->Emken, T. & Kouvaris, C., 2017, DaMaSCUS, Astrophysics Source Code Library, record [[ascl:1611.012](http://ascl.net/code/v/1702)
+>Emken, T. & Kouvaris, C., 2017, DaMaSCUS, Astrophysics Source Code Library, record [[ascl:1611.012]](http://ascl.net/code/v/1702)
 
 as well as the original publication,
 
->Emken, T. & Kouvaris, C., DaMaSCUS: The Impact of Underground Scatterings on Direct Detection of Light Dark Matter, [JCAP 1710 (2017) no.10, 031](http://iopscience.iop.org/article/10.1088/1475-7516/2017/10/031/meta), [[arXiv:1706.02249](https://arxiv.org/abs/1706.02249).
+>Emken, T. & Kouvaris, C., DaMaSCUS: The Impact of Underground Scatterings on Direct Detection of Light Dark Matter, [JCAP 1710 (2017) no.10, 031](http://iopscience.iop.org/article/10.1088/1475-7516/2017/10/031/meta), [[arXiv:1706.02249]](https://arxiv.org/abs/1706.02249).
 
 ## AUTHORS & CONTACT
 
