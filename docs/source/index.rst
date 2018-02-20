@@ -42,7 +42,7 @@ For the underlying physics check out the `paper <https://arxiv.org/abs/1706.0224
    usage
    citation
    releases
-   licence
+   license
    contact
 
 =============
