@@ -37,7 +37,7 @@ The code will be updated continuously. Here I list only important updates and ma
 
 If you decide to use this code, please cite
 
->Emken, T. & Kouvaris, C., 2017, DaMaSCUS, Astrophysics Source Code Library, record [[ascl:1611.012]](http://ascl.net/code/v/1702)
+>Emken, T. & Kouvaris, C., 2017, DaMaSCUS, Astrophysics Source Code Library, record [[ascl:1706.003]](https://ascl.net/1706.003)
 
 as well as the original publication,
 
