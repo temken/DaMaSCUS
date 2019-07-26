@@ -48,11 +48,11 @@ int main(int argc, char *argv[])
 	    }
 
 	//Divide the isodetection rings between the processes.
-    	std::vector<int> iList = WorkDivision(numprocs);
+    	std::vector<int> iList = WorkDivision(numprocs,Isodetection_Rings);
 	 	MPI_Barrier(MPI_COMM_WORLD);
-	 	if(myRank==0&&numprocs>180)
+	 	if(myRank==0&&numprocs>Isodetection_Rings)
 	 	{
-	 		cout <<"Warning: More MPI processes than isodetection rings. " <<numprocs-180 <<" have nothing to do." <<endl;
+	 		cout <<"Warning: More MPI processes than isodetection rings. " <<numprocs-Isodetection_Rings <<" have nothing to do." <<endl;
 	 	}
 	
 	//Create folder for histograms DaMaSCUS/results/SimID_histograms
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 ////////////////////////////////////////////////////////////
 		//DM Density	
  		//The master reads and copies the rho file from the /data directory. Afterwards he shares the vector with everyone.
-			std::vector<std::vector<double>> rho(180, vector<double>(2));
+			std::vector<std::vector<double>> rho(Isodetection_Rings, vector<double>(2));
 			if(myRank==0)
 			{
 				cout <<"Reading in local DM densities."<<endl;
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
 				copy.open("../results/"+SimID+".rho");
 				if(f2.is_open())
 				{
-					for(int i =0;i<180;i++)
+					for(int i =0;i<Isodetection_Rings;i++)
 					{
 						int ring;
 						double b1,b2;
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 			}
 			//Broadcast the rho vector
 			if(myRank==0) cout <<"Broadcast local DM densities to all MPI processes." <<endl;
-				for(int k=0;k<180;k++)
+				for(int k=0;k<Isodetection_Rings;k++)
 				{
 					MPI_Bcast(&rho[k].front(),2,MPI_DOUBLE,0,MPI_COMM_WORLD);
 				}
@@ -388,7 +388,7 @@ int main(int argc, char *argv[])
 					ofstream f;
 					f.open("../results/"+SimID+".speed");
 				//Write results in ascii files.
-					for(int ring=0;ring<180;ring++)
+					for(int ring=0;ring<Isodetection_Rings;ring++)
 					{
 						std::vector<double> speedbuffer (3);
 						MPI_File_read(speedfile,speedbuffer.data(),speedbuffer.size(),MPI_DOUBLE,&status);
@@ -407,7 +407,7 @@ int main(int argc, char *argv[])
 						ofstream g;
 						g.open("../results/"+SimID+"."+experiment);
 					//Write results in ascii files.
-						for(int ring=0;ring<180;ring++)
+						for(int ring=0;ring<Isodetection_Rings;ring++)
 						{
 							std::vector<double> ratebuffer (4);
 							MPI_File_read(ratefile,ratebuffer.data(),ratebuffer.size(),MPI_DOUBLE,&status);

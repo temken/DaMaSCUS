@@ -32,7 +32,7 @@ class Event {
 		//Vector Norms
 		double NormPosition();
 		double NormVelocity();
-		int IsodetectionRing();
+		int IsodetectionRing(int isodetection_rings);
 		double DataWeight();
 		//Overloading the output operator <<
 		friend std::ostream& operator<<(std::ostream &output,const Event &event);

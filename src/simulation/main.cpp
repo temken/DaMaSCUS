@@ -76,15 +76,15 @@ int main(int argc, char *argv[])
 			unsigned long long int Local_SampleSize_Initial =ceil((double)Global_SampleSize_Initial/numprocs);
 			Global_SampleSize_Initial=Local_SampleSize_Initial*numprocs;
 		//Particle counter per isodetection ring
-			unsigned long long int Global_N0[180];
-			unsigned long long int Local_N0[180];
-			for (int i=0;i<180;i++)Local_N0[i]=0;
-			long double Global_W0[180];
-			long double Local_W0[180];
-			for (int i=0;i<180;i++)Local_W0[i]=0.0;
-			long double Global_W0sq[180];
-			long double Local_W0sq[180];
-			for (int i=0;i<180;i++)Local_W0sq[i]=0.0;
+			unsigned long long int Global_N0[Isodetection_Rings];
+			unsigned long long int Local_N0[Isodetection_Rings];
+			for (int i=0;i<Isodetection_Rings;i++)Local_N0[i]=0;
+			long double Global_W0[Isodetection_Rings];
+			long double Local_W0[Isodetection_Rings];
+			for (int i=0;i<Isodetection_Rings;i++)Local_W0[i]=0.0;
+			long double Global_W0sq[Isodetection_Rings];
+			long double Local_W0sq[Isodetection_Rings];
+			for (int i=0;i<Isodetection_Rings;i++)Local_W0sq[i]=0.0;
 
 		//Depth crossing counter
 			unsigned long long int Global_Counter_Crossings0=0;
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 				//Increment the isodetection counters and record the weighted velocity norm.
 				for (unsigned int j=0;j<CrossingEvents.size();j++)
 				{
-					int IsoRing=CrossingEvents[j].IsodetectionRing();
+					int IsoRing=CrossingEvents[j].IsodetectionRing(Isodetection_Rings);
 					Local_N0[IsoRing]++;
 					
 					double weight = CrossingEvents[j].DataWeight();
@@ -110,10 +110,10 @@ int main(int argc, char *argv[])
 			//Reactivate form factor
 				FormFactor=formfactor0;
 		//Reduce the local isodetection counter
-			MPI_Reduce(&Local_N0,&Global_N0,180,MPI_UNSIGNED_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
+			MPI_Reduce(&Local_N0,&Global_N0,Isodetection_Rings,MPI_UNSIGNED_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
 			MPI_Reduce(&Local_Counter_Crossings0,&Global_Counter_Crossings0,1,MPI_UNSIGNED_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
-			MPI_Reduce(&Local_W0,&Global_W0,180,MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
-			MPI_Reduce(&Local_W0sq,&Global_W0sq,180,MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+			MPI_Reduce(&Local_W0,&Global_W0,Isodetection_Rings,MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+			MPI_Reduce(&Local_W0sq,&Global_W0sq,Isodetection_Rings,MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
 
 		
 		//Status update on the console	
@@ -129,17 +129,17 @@ int main(int argc, char *argv[])
 			Initialize_PREM(mChi,sigma0);
 		if (myRank==0) cout <<"Start main MC simulation run with scatterings." <<endl;
 		//Particle counter per isodetection ring
-			unsigned long long int Global_N[180];
-			unsigned long long int Local_N[180];
-			for (int i=0;i<180;i++)Local_N[i]=0;
+			unsigned long long int Global_N[Isodetection_Rings];
+			unsigned long long int Local_N[Isodetection_Rings];
+			for (int i=0;i<Isodetection_Rings;i++)Local_N[i]=0;
 		//Sum of data weights, necessary for determination of local DM number density 
-			long double Global_W[180];
-			long double Local_W[180];
-			for (int i=0;i<180;i++)Local_W[i]=0.0;
+			long double Global_W[Isodetection_Rings];
+			long double Local_W[Isodetection_Rings];
+			for (int i=0;i<Isodetection_Rings;i++)Local_W[i]=0.0;
 		//Sum of squared data weights, necessary for determination of the local DM number density uncertainty.
-			long double Global_Wsq[180];
-			long double Local_Wsq[180];
-			for (int i=0;i<180;i++)Local_Wsq[i]=0.0;
+			long double Global_Wsq[Isodetection_Rings];
+			long double Local_Wsq[Isodetection_Rings];
+			for (int i=0;i<Isodetection_Rings;i++)Local_Wsq[i]=0.0;
 		//Work Load Distribution: Desired Velocity Data Sample Size for each isodetection ring for each MPI process.
 			unsigned int Local_SampleSize_Velocity=ceil((double)Global_SampleSize_Velocity/numprocs);
 			Global_SampleSize_Velocity=Local_SampleSize_Velocity*numprocs;
@@ -160,16 +160,16 @@ int main(int argc, char *argv[])
 			unsigned long long int Local_Counter_vCutoff=0;
 		//Local Counter for velocity data 
 			unsigned int Local_Counter_DatapointsTotal=0;
-			unsigned int Local_Counter_Datapoints[180];
-			for(int i=0;i<180;i++) Local_Counter_Datapoints[i]=0;
+			unsigned int Local_Counter_Datapoints[Isodetection_Rings];
+			for(int i=0;i<Isodetection_Rings;i++) Local_Counter_Datapoints[i]=0;
 			
 		//MPI Output File and Offset
 			MPI_Offset offset;
- 			MPI_File   file_Velocity[180];
- 			MPI_File   file_Weights[180];
+ 			MPI_File   file_Velocity[Isodetection_Rings];
+ 			MPI_File   file_Weights[Isodetection_Rings];
  		   	MPI_Status status;
  		//Velocity Output files including process dependent offset
- 		   	for(int i=0;i<180;i++)
+ 		   	for(int i=0;i<Isodetection_Rings;i++)
  		   	{
  		   		//Velocity output files
 	 		   		string filename="../data/"+SimID+"_data/velocity."+std::to_string(i);
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
 			 			MPI_File_seek(file_Weights[i], offset,MPI_SEEK_SET);	
  		   	}
  		//Simulation of Tracks
- 		   	while(Local_Counter_DatapointsTotal<180.0*Local_SampleSize_Velocity)
+ 		   	while(Local_Counter_DatapointsTotal<Isodetection_Rings*Local_SampleSize_Velocity)
  		   	{
  		   		//Simulate track.
  		   			Trajectory trajectory=ParticleTrack(mChi,sigma0,InitialCondition(0,vEarth,PRNG),vcut,PRNG); 		   		
@@ -215,7 +215,7 @@ int main(int argc, char *argv[])
 					for (unsigned int j=0;j<CrossingEvents.size();j++)
 					{
 						//Which ring?
-							int IsoRing=CrossingEvents[j].IsodetectionRing();
+							int IsoRing=CrossingEvents[j].IsodetectionRing(Isodetection_Rings);
 						//Increase the weight sums
 							double weight =CrossingEvents[j].DataWeight() ;
 							Local_W[IsoRing]+=weight;
@@ -244,21 +244,21 @@ int main(int argc, char *argv[])
   	  		MPI_Reduce(&Local_Counter_vCutoff,&Global_Counter_vCutoff,1,MPI_UNSIGNED_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
   	  		MPI_Reduce(&Local_Counter_Free,&Global_Counter_Free,1,MPI_UNSIGNED_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
   	  		MPI_Reduce(&Local_Counter_Crossings,&Global_Counter_Crossings,1,MPI_UNSIGNED_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);
-  	  		MPI_Reduce(&Local_N,&Global_N,180,MPI_UNSIGNED_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);  	
-			MPI_Reduce(&Local_W,&Global_W,180,MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
-			MPI_Reduce(&Local_Wsq,&Global_Wsq,180,MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+  	  		MPI_Reduce(&Local_N,&Global_N,Isodetection_Rings,MPI_UNSIGNED_LONG_LONG,MPI_SUM,0,MPI_COMM_WORLD);  	
+			MPI_Reduce(&Local_W,&Global_W,Isodetection_Rings,MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
+			MPI_Reduce(&Local_Wsq,&Global_Wsq,Isodetection_Rings,MPI_LONG_DOUBLE,MPI_SUM,0,MPI_COMM_WORLD);
 
   	  	//Calculate DM Densities
-  	  		vector<vector<double>> Edensity=DM_EnergyDensity(Global_W0,Global_SampleSize_Initial,Global_W,Global_Counter_Tracks,Global_W0sq,Global_Wsq);
+  	  		vector<vector<double>> Edensity=DM_EnergyDensity(Global_W0,Global_SampleSize_Initial,Global_W,Global_Counter_Tracks,Global_W0sq,Global_Wsq,Isodetection_Rings);
   	  		vector<vector<double>> Ndensity=DM_NumberDensity(mChi,Edensity);
-			double averageNdensity=DM_AverageDensity(Ndensity);
+			double averageNdensity=DM_AverageDensity(Ndensity,Isodetection_Rings);
  	   	//Status update and save N(theta) and rho(theta)
  	   		if(myRank==0)
 			{	  					
 				//Save density
 					ofstream f;
 					f.open("../data/"+SimID+".rho");
-					for(int i=0;i<180;i++) f <<i <<"\t" <<InUnits(Edensity[i][0],GeV/cm/cm/cm)<<"\t" <<InUnits(Edensity[i][1],GeV/cm/cm/cm) <<endl;//<<"\t" <<InUnits(AverageVelocity_0[i],km/sec)<<"\t" <<InUnits(AverageVelocity[i],km/sec)<<endl;// <<"\t" <<Global_N0[i]<<"\t" <<Global_N[i] <<endl; 
+					for(int i=0;i<Isodetection_Rings;i++) f <<i <<"\t" <<InUnits(Edensity[i][0],GeV/cm/cm/cm)<<"\t" <<InUnits(Edensity[i][1],GeV/cm/cm/cm) <<endl;//<<"\t" <<InUnits(AverageVelocity_0[i],km/sec)<<"\t" <<InUnits(AverageVelocity[i],km/sec)<<endl;// <<"\t" <<Global_N0[i]<<"\t" <<Global_N[i] <<endl; 
 					f.close();
 				//computing time
 					t2 = high_resolution_clock::now();
@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
 					cout <<"\tMain MC run finished\t" <<"("<<floor(durationMain) <<" s)." <<endl;
 			}
 		//Close all output files
-		for(int i=0;i<180;i++)
+		for(int i=0;i<Isodetection_Rings;i++)
 		{
 			MPI_File_close(&file_Velocity[i]);
 			MPI_File_close(&file_Weights[i]);

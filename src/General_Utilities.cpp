@@ -25,6 +25,8 @@ using namespace libconfig;
 	double rhoDM=0.0;
 	unsigned long long int Global_SampleSize_Initial = 0;
 	unsigned int Global_SampleSize_Velocity=0;
+	int Isodetection_Rings=0;
+
 	int SimDate [3] = 	{0,0,0};
 	int SimTime [3] = 	{0,0,0};
 	double nJ2000 = FractionalDays(SimDate,SimTime);
@@ -105,6 +107,16 @@ using namespace libconfig;
 			catch(const SettingNotFoundException &nfex)
 			{
 				cerr << "No 'samplesize' setting in configuration file." << endl;
+				exit(EXIT_FAILURE);
+			}
+		//Isodetection rings
+			try
+			{
+				Isodetection_Rings = cfg.lookup("rings");
+			}
+			catch(const SettingNotFoundException &nfex)
+			{
+				cerr << "No 'rings' setting in configuration file." << endl;
 				exit(EXIT_FAILURE);
 			}
 		//Velocity cut off
@@ -221,7 +233,8 @@ using namespace libconfig;
 				<<"\tMPI processes\t" <<numprocs<<endl<<endl
 				<<"//Number of initial runs and data points per isodetection ring:"<<endl
 				<<"\tnInitial\t"<<(double)Global_SampleSize_Initial<<endl
-				<<"\tData points\t" <<(double)Global_SampleSize_Velocity<<endl <<endl
+				<<"\tData points\t" <<(double)Global_SampleSize_Velocity<<endl
+				<<"\tIsodetection rings\t" <<(double)Isodetection_Rings<<endl <<endl
 				<<"//Simulation time:" <<endl
 				<<"\tDate\t\t" <<SimDate[0]<<"."<<SimDate[1]<<"."<<SimDate[2]<<endl
 				<<"\tTime\t\t"<<SimTime[0]<<":"<<SimTime[1]<<":"<<SimTime[2]<<endl
@@ -284,16 +297,17 @@ using namespace libconfig;
 
 
 	//Area of isodetection rings
-		double IsoDetectionRing_Area(int theta,double depth)
+		double IsoDetectionRing_Area(int theta,int rings,double depth)
 		{
-			return 2*M_PI*pow(rEarth-depth,2)*(cos(theta*deg)-cos((theta+1)*deg));
+			double dTheta = 180.0 / rings;
+			return 2*M_PI*pow(rEarth-depth,2)*(cos(theta*deg)-cos((theta+dTheta)*deg));
 		}
 
 
-	std::vector< std::vector<double>> DM_EnergyDensity(long double w0[],int long long unsigned n0total,long double w[],int unsigned long long ntotal,long double w0sq[],long double wsq[])
+	std::vector< std::vector<double>> DM_EnergyDensity(long double w0[],int long long unsigned n0total,long double w[],int unsigned long long ntotal,long double w0sq[],long double wsq[],int rings)
 	{
 		std::vector<std::vector<double>> output;
-			for(int i=0;i<180;i++)
+			for(int i=0;i<rings;i++)
 			{
 				double dens=1.0*(w[i]/ntotal)/(w0[i]/n0total)*rhoDM;
 				double variance = pow(dens/w[i],2.0)*wsq[i] +pow(dens/w0[i],2.0)*w0sq[i]; 
@@ -319,12 +333,12 @@ using namespace libconfig;
 
 
 	//Average density over all isodetection rings
-		double DM_AverageDensity(std::vector<std::vector<double>> density,double depth)
+		double DM_AverageDensity(std::vector<std::vector<double>> density,int rings,double depth)
 		{
 			double TotalArea=4*M_PI*pow(rEarth-depth,2);
 			double sum=0.0;
-			for(int i=0;i<180;i++) 
-				sum+= density[i][0]*IsoDetectionRing_Area(i,depth)/TotalArea;
+			for(int i=0;i<rings;i++) 
+				sum+= density[i][0]*IsoDetectionRing_Area(i,rings,depth)/TotalArea;
 			return sum;
 		}
 
@@ -345,15 +359,15 @@ using namespace libconfig;
 			
 	}
 
-	std::vector<int> WorkDivision(int WorldSize)
+	std::vector<int> WorkDivision(int WorldSize, int rings)
 	{
 		std::vector<int> output;
-		int overlap = WorldSize*ceil(180.0/WorldSize)-180;
+		int overlap = WorldSize*ceil(1.0*rings/WorldSize)-rings;
 		for(int i =0 ; i<=WorldSize; i++)
 		{
 			if(i==0) 			output.push_back(0);
-			else if(i<=(WorldSize-overlap))	output.push_back(i*ceil(180.0/WorldSize));
-			else				output.push_back(output[i-1]+floor(180.0/WorldSize));
+			else if(i<=(WorldSize-overlap))	output.push_back(i*ceil(1.0*rings/WorldSize));
+			else				output.push_back(output[i-1]+floor(1.0*rings/WorldSize));
 		}
 		return output;
 	}

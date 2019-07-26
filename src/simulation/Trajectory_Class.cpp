@@ -64,9 +64,9 @@
 			return velocity.norm();
 		}
 	//Returns the number of the iso ring 1-180;
-		int Event::IsodetectionRing()
+		int Event::IsodetectionRing(int isodetection_rings)
 		{
-			return acos(position.normalized().dot(vEarth.normalized()))/M_PI*180.0;
+			return 1.0*acos(position.normalized().dot(vEarth.normalized()))/M_PI*isodetection_rings;
 		}
 	//Returns the weight of a velocity data point. Should only be used for events returned by Trajectory::DepthCrossing
 		double Event::DataWeight()
