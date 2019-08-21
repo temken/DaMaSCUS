@@ -392,7 +392,7 @@ int main(int argc, char *argv[])
 					{
 						std::vector<double> speedbuffer (3);
 						MPI_File_read(speedfile,speedbuffer.data(),speedbuffer.size(),MPI_DOUBLE,&status);
-						f <<ring <<"\t" <<speedbuffer[1]<<"\t"<<speedbuffer[2]<<endl;
+						f <<180.0 / Isodetection_Rings * ring <<"\t" <<speedbuffer[1]<<"\t"<<speedbuffer[2]<<endl;
 					}
 				//Close file
 					f.close();
@@ -411,7 +411,7 @@ int main(int argc, char *argv[])
 						{
 							std::vector<double> ratebuffer (4);
 							MPI_File_read(ratefile,ratebuffer.data(),ratebuffer.size(),MPI_DOUBLE,&status);
-							g <<ring <<"\t" <<ratebuffer[1]<<"\t"<<ratebuffer[2]<<"\t"<<ratebuffer[3]<<endl;
+							g <<180.0 / Isodetection_Rings * ring <<"\t" <<ratebuffer[1]<<"\t"<<ratebuffer[2]<<"\t"<<ratebuffer[3]<<endl;
 						}
 					//Close files
 						g.close();

@@ -258,7 +258,7 @@ int main(int argc, char *argv[])
 				//Save density
 					ofstream f;
 					f.open("../data/"+SimID+".rho");
-					for(int i=0;i<Isodetection_Rings;i++) f <<i <<"\t" <<InUnits(Edensity[i][0],GeV/cm/cm/cm)<<"\t" <<InUnits(Edensity[i][1],GeV/cm/cm/cm) <<endl;//<<"\t" <<InUnits(AverageVelocity_0[i],km/sec)<<"\t" <<InUnits(AverageVelocity[i],km/sec)<<endl;// <<"\t" <<Global_N0[i]<<"\t" <<Global_N[i] <<endl; 
+					for(int i=0;i<Isodetection_Rings;i++) f <<180.0 / Isodetection_Rings * i  <<"\t" <<InUnits(Edensity[i][0],GeV/cm/cm/cm)<<"\t" <<InUnits(Edensity[i][1],GeV/cm/cm/cm) <<endl;//<<"\t" <<InUnits(AverageVelocity_0[i],km/sec)<<"\t" <<InUnits(AverageVelocity[i],km/sec)<<endl;// <<"\t" <<Global_N0[i]<<"\t" <<Global_N[i] <<endl; 
 					f.close();
 				//computing time
 					t2 = high_resolution_clock::now();
