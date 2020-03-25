@@ -2,12 +2,12 @@
 [![Build Status](https://travis-ci.com/temken/DaMaSCUS.svg?branch=master)](https://travis-ci.com/temken/DaMaSCUS)
 [![codecov](https://codecov.io/gh/temken/DaMaSCUS/branch/master/graph/badge.svg)](https://codecov.io/gh/temken/DaMaSCUS)
   
-
 # DaMaSCUS
 
 Dark Matter Simulation Code for Underground Scatterings
 
 <a href="http://ascl.net/1706.003"><img src="https://img.shields.io/badge/ascl-1706.003-blue.svg?colorB=262255" alt="ascl:1706.003" /></a>
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3726878.svg)](https://doi.org/10.5281/zenodo.3726878)
 [![arXiv](https://img.shields.io/badge/arXiv-1706.02249-B31B1B.svg)](https://arxiv.org/abs/1706.02249)
 
 DaMaSCUS Version 1.1 25/03/2020
@@ -49,7 +49,7 @@ as well as the original publication,
 
 In addition, version 1.1 of the code is archived under
 
-> [[DOI:10.5281/zenodo.XXXXX]](https://doi.org/10.5281/zenodo.XXXXX)
+> [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3726878.svg)](https://doi.org/10.5281/zenodo.3726878)
 
 ## AUTHORS & CONTACT
 

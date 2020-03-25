@@ -8,8 +8,8 @@
 .. image:: https://readthedocs.org/projects/damascus/badge/?version=latest
 	:target: http://damascus.readthedocs.io/en/latest/?badge=latest
 	:alt: Documentation Status
-.. image:: https://travis-ci.org/temken/DaMaSCUS.svg?branch=master
-	:target: https://travis-ci.org/temken/DaMaSCUS
+.. image:: https://travis-ci.com/temken/DaMaSCUS.svg?branch=master
+    :target: https://travis-ci.com/temken/DaMaSCUS
 .. image:: https://codecov.io/gh/temken/DaMaSCUS/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/temken/DaMaSCUS
 	
@@ -22,8 +22,11 @@ Authors: `Timon Emken <https://timonemken.com>`_ & `Chris Kouvaris <http://cp3-o
 .. raw:: html
 
 	<a href="http://ascl.net/1706.003"><img src="https://img.shields.io/badge/ascl-1706.003-blue.svg?colorB=262255" alt="ascl:1706.003" /></a>
-
+   
 |
+
+.. image:: https://zenodo.org/badge/DOI/10.5281/zenodo.3726878.svg
+   :target: https://doi.org/10.5281/zenodo.3726878
 
 * DaMaSCUS is a MC simulator of dark matter particles as they move through the Earth and scatter on terrestrial nuclei. 
 * It allows to compute the local distortions of the DM density and velocity distribution caused by collisions with nuclei. 
