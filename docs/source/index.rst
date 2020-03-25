@@ -17,7 +17,7 @@
 DaMaSCUS - Dark Matter Simulation Code for Underground Simulations
 ==================================================================
 
-Authors: `Timon Emken <http://cp3-origins.dk/people/staff/emken>`_ & `Chris Kouvaris <http://cp3-origins.dk/people/staff/kouvaris>`_
+Authors: `Timon Emken <https://timonemken.com>`_ & `Chris Kouvaris <http://cp3-origins.dk/people/staff/kouvaris>`_
 
 .. raw:: html
 
@@ -78,7 +78,7 @@ Contact & Support
 
 For questions, bug reports or other suggestions please contact
 
-	`Timon Emken <http://cp3-origins.dk/people/staff/emken>`_ (emken@cp3.sdu.dk)
+	`Timon Emken <https://timonemken.com>`_ (emken@chalmers.se)
 
 
 .. Indices and tables

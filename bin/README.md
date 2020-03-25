@@ -1,1 +1,1 @@
-This folder contains the output executables and a configuration file.
+This folder contains the executables and configuration files.

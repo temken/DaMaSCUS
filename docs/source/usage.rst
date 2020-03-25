@@ -34,8 +34,11 @@ Here you adjust all the input parameter for the next DaMaSCUS run. We go through
 			initialruns	=	100000000L;	//Number of particles in the initial MC run
 			samplesize	=	10000;		//velocity sample size per isodetection ring
 			vcutoff		=	1.0;		//velocity cutoff in cm/sec
+			rings		=	36;				//number of isodetection rings
 
 First you assign the simulation run a unique identifying ID. You also decide the number of particles you want to simulate in the initial run without scatterings (initialruns) and how many data points you need in each isodetection ring (samplesize). The velocity cut-off, below which a trajectory simulation is aborted.
+
+New in version 1.1: The number of isodetection rings is now flexible and can be set in the configuration file (rings).
 
 .. warning::
 
