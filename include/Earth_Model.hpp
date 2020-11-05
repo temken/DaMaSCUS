@@ -1,5 +1,5 @@
-#ifndef __module_hpp_
-#define __module_hpp_
+#ifndef __Earth_Model_hpp_
+#define __Earth_Model_hpp_
 
 // Headers from libphysica
 #include "Linear_Algebra.hpp"

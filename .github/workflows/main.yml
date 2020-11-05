@@ -2,9 +2,9 @@ name: Build Status
 
 on:
   push:
-    branches: [ v2 ]
+    branches: [ v2, dev ]
   pull_request:
-    branches: [ v2 ]
+    branches: [ v2, dev ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)

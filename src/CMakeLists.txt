@@ -18,7 +18,7 @@
 
 	# Static library
 	add_library(lib_DaMaSCUS STATIC
-	    module.cpp)
+	    Earth_Model.cpp)
 
 	set_target_properties(lib_DaMaSCUS PROPERTIES PREFIX "")
 

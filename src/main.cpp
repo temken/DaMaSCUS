@@ -4,7 +4,7 @@
 #include <cstring> // for strlen
 
 #include "version.hpp"
-#include "module.hpp"
+#include "Earth_Model.hpp"
 
 // Headers from libphysica
 #include "Natural_Units.hpp"

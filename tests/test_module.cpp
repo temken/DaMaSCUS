@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "module.hpp"
+#include "Earth_Model.hpp"
 
 TEST(TestFib, ReturnsCorrectFibonacciNumber)
 {
