@@ -1,4 +1,4 @@
-#include "Earth_Model.hpp"
+#include "Data_Generation.hpp"
 
 namespace DaMaSCUS
 {

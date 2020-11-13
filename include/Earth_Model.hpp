@@ -1,12 +1,9 @@
 #ifndef __Earth_Model_hpp_
 #define __Earth_Model_hpp_
 
-// Headers from libphysica
-#include "Linear_Algebra.hpp"
+namespace DaMaSCUS
+{
 
-// Headers from obscura
-#include "Direct_Detection.hpp"
-
-extern int fib(int n);
+}	// namespace DaMaSCUS
 
 #endif

@@ -2,7 +2,7 @@
 [![codecov](https://codecov.io/gh/temken/DaMaSCUS/branch/v2/graph/badge.svg)](https://codecov.io/gh/temken/DaMaSCUS)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-# DaMaSCUS v2.0
+# DaMaSCUS v2.1.0
 
 - build with [CMake](https://cmake.org/)
 - continuous integration with [Github Actions](https://github.com/actions)

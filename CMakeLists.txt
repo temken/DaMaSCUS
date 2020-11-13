@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(DaMaSCUS VERSION "1.2")
+project(DaMaSCUS VERSION "2.1.0")
 
 # Use C++-11
 set(CMAKE_CXX_STANDARD 11)

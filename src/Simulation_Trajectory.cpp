@@ -1,4 +1,4 @@
-#include "Earth_Model.hpp"
+#include "Simulation_Trajectory.hpp"
 
 namespace DaMaSCUS
 {
