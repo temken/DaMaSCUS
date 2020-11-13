@@ -1,5 +1,5 @@
 # 1. Test executable
-add_test(NAME executable_test COMMAND mpirun DaMaSCUS config.cfg
+add_test(NAME executable_test COMMAND DaMaSCUS config.cfg
 	WORKING_DIRECTORY ${BIN_DIR})
 
 # 2. Unit tests: Data_Generation.xpp
