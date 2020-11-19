@@ -5,53 +5,69 @@
 // Headers from libphysica
 #include "Natural_Units.hpp"
 #include "Statistics.hpp"
+#include "Utilities.hpp"
 
 namespace DaMaSCUS
 {
 
 using namespace libphysica::natural_units;
 
-Earth_Model::Earth_Model()
+Earth_Model::Earth_Model(obscura::DM_Particle& DM, double vMax)
 : name("Preliminary Reference Earth Model")
 {
-	density_layer_radii	 = {1221.5 * km, 3480 * km, 5701 * km, 5771 * km, 5971 * km, 6151 * km, 6346.6 * km, 6356 * km, 6368 * km, 6371 * km};
+	layer_transitions	 = {1221.5 * km, 3480 * km, 5701 * km, 5771 * km, 5971 * km, 6151 * km, 6346.6 * km, 6356 * km, 6368 * km, 6371 * km};
 	density_coefficients = {{13.0885, 0.0, -8.8381, 0.0},
 							{12.5815, -1.2638, -3.6426, -5.5281},
 							{7.9565, -6.4761, 5.5283, -3.0807},
 							{5.3197, -1.4836, 0.0, 0.0},
 							{11.2494, -8.0298, 0.0, 0.0},
-							{11.2494, -3.8045, 0.0, 0.0},
+							{7.1089, -3.8045, 0.0, 0.0},
 							{2.6910, 0.6924, 0.0, 0.0},
 							{2.9, 0.0, 0.0, 0.0},
 							{2.6, 0.0, 0.0, 0.0},
 							{2.6, 0.0, 0.0, 0.0},
 							{0.0, 0.0, 0.0, 0.0}};
 
-	composition_layer_radii = {1221.5 * km, 6368 * km, 6371 * km};
-	elements				= {
-		   {obscura::Get_Element(26), obscura::Get_Element(14), obscura::Get_Element(28), obscura::Get_Element(16), obscura::Get_Element(24), obscura::Get_Element(25), obscura::Get_Element(15), obscura::Get_Element(6), obscura::Get_Element(1)},
-		   {obscura::Get_Element(8), obscura::Get_Element(12), obscura::Get_Element(14), obscura::Get_Element(26), obscura::Get_Element(20), obscura::Get_Element(13), obscura::Get_Element(11), obscura::Get_Element(24), obscura::Get_Element(28), obscura::Get_Element(25), obscura::Get_Element(16), obscura::Get_Element(6), obscura::Get_Element(1), obscura::Get_Element(15)},
-		   {obscura::Get_Element(8), obscura::Get_Element(14), obscura::Get_Element(13), obscura::Get_Element(26), obscura::Get_Element(20), obscura::Get_Element(19), obscura::Get_Element(11), obscura::Get_Element(12)}};
+	elements = {
+		{obscura::Get_Element(26), obscura::Get_Element(14), obscura::Get_Element(28), obscura::Get_Element(16), obscura::Get_Element(24), obscura::Get_Element(25), obscura::Get_Element(15), obscura::Get_Element(6), obscura::Get_Element(1)},
+		{obscura::Get_Element(8), obscura::Get_Element(12), obscura::Get_Element(14), obscura::Get_Element(26), obscura::Get_Element(20), obscura::Get_Element(13), obscura::Get_Element(11), obscura::Get_Element(24), obscura::Get_Element(28), obscura::Get_Element(25), obscura::Get_Element(16), obscura::Get_Element(6), obscura::Get_Element(1), obscura::Get_Element(15)},
+		{obscura::Get_Element(8), obscura::Get_Element(14), obscura::Get_Element(13), obscura::Get_Element(26), obscura::Get_Element(20), obscura::Get_Element(19), obscura::Get_Element(11), obscura::Get_Element(12)}};
 	nuclear_abundances = {
 		{0.855, 0.06, 0.052, 0.019, 0.009, 0.003, 0.002, 0.002, 0.0006},
 		{0.44, 0.228, 0.21, 0.0626, 0.0253, 0.0235, 0.0027, 0.0026, 0.002, 0.001, 0.0003, 0.0001, 0.0001, 0.00009},
 		{0.466, 0.277, 0.081, 0.05, 0.036, 0.028, 0.026, 0.021}};
+
+	// Interpolate lambda^-1 / rho as a function of the DM speed.
+	std::vector<double> speeds = libphysica::Linear_Space(0.0, vMax, 200);
+	for(unsigned int i = 0; i < elements.size(); i++)
+	{
+		std::vector<double> prefactors;
+		double r = 0.5 * rEarth;   //cancels
+		for(auto& v : speeds)
+			prefactors.push_back(1.0 / Mean_Free_Path(DM, r, v) / Mass_Density(r));
+		mfp_prefactors.push_back(libphysica::Interpolation(speeds, prefactors));
+	}
 }
 
 unsigned int Earth_Model::Current_Density_Layer(double r) const
 {
-	for(unsigned int i = 0; i < density_layer_radii.size(); i++)
-		if(r < density_layer_radii[i])
+	for(unsigned int i = 0; i < layer_transitions.size(); i++)
+		if(r < layer_transitions[i])
 			return i;
 	return 10;
 }
 
 unsigned int Earth_Model::Current_Composition_Layer(double r) const
 {
-	for(unsigned int i = 0; i < composition_layer_radii.size(); i++)
-		if(r < composition_layer_radii[i])
-			return i;
-	return 3;
+	unsigned int density_layer = Current_Density_Layer(r);
+	if(density_layer == 0)
+		return 0;
+	else if(density_layer < 9)
+		return 1;
+	else if(density_layer == 9)
+		return 2;
+	else
+		return 3;
 }
 
 double Earth_Model::Time_of_Layer_Exit(const Event& current_event) const
@@ -67,17 +83,20 @@ double Earth_Model::Time_of_Layer_Exit(const Event& current_event) const
 		std::exit(EXIT_FAILURE);
 	}
 
-	double R_next = density_layer_radii[current_layer];
+	double R_next		   = layer_transitions[current_layer];
+	double time_layer_exit = (-xv + sqrt(R_next * R_next * v * v - v * v * x * x + xv * xv)) / v / v;
 	if(current_layer > 0)
 	{
 		double time_of_min_radial_distance = -1.0 * xv / v / v;
 		double min_radial_distance		   = x * x - xv * xv / v / v;
-		if(time_of_min_radial_distance > 0 && min_radial_distance < density_layer_radii[current_layer - 1])
-			R_next = density_layer_radii[current_layer - 1];
+		if(time_of_min_radial_distance > 0 && min_radial_distance < layer_transitions[current_layer - 1])
+		{
+			R_next			= layer_transitions[current_layer - 1];
+			time_layer_exit = (-xv - sqrt(R_next * R_next * v * v - v * v * x * x + xv * xv)) / v / v;
+		}
 	}
 
-	double t_layer_exit = (-xv + sqrt(R_next * R_next * v * v - v * v * x * x + xv * xv)) / v / v;
-	return t_layer_exit + cm / v;
+	return time_layer_exit + cm / v;
 }
 
 double Earth_Model::Mass_Density(double r) const
@@ -90,7 +109,7 @@ double Earth_Model::Mass_Density(double r) const
 	return rho * gram / cm / cm / cm;
 }
 
-double Earth_Model::Mean_Free_Path(obscura::DM_Particle& DM, double r, double vDM) const
+double Earth_Model::Mean_Free_Path(obscura::DM_Particle& DM, double r, double vDM)
 {
 	unsigned int composition_layer = Current_Composition_Layer(r);
 	double rho					   = Mass_Density(r);
@@ -102,6 +121,13 @@ double Earth_Model::Mean_Free_Path(obscura::DM_Particle& DM, double r, double vD
 			lambda_inverse += abundance * isotope.abundance * rho / isotope.mass * DM.Sigma_Nucleus(isotope, vDM);
 	}
 	return 1.0 / lambda_inverse;
+}
+
+double Earth_Model::Mean_Free_Path_Interpolated(obscura::DM_Particle& DM, double r, double vDM)
+{
+	unsigned int composition_layer = Current_Composition_Layer(r);
+	double rho					   = Mass_Density(r);
+	return 1.0 / (mfp_prefactors[composition_layer](vDM) * rho);
 }
 
 obscura::Isotope Earth_Model::Sample_Target_Isotope(obscura::DM_Particle& DM, double r, double vDM, std::mt19937& PRNG) const

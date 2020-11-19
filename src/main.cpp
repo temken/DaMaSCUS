@@ -1,10 +1,8 @@
 #include <chrono>
 #include <cmath>
 #include <cstring>	 // for strlen
+#include <fstream>
 #include <iostream>
-
-#include "Earth_Model.hpp"
-#include "version.hpp"
 
 // Headers from libphysica
 #include "Natural_Units.hpp"
@@ -15,7 +13,11 @@
 #include "Configuration.hpp"
 #include "Target_Nucleus.hpp"
 
+#include "Earth_Model.hpp"
+#include "version.hpp"
+
 using namespace libphysica::natural_units;
+using namespace DaMaSCUS;
 
 int main(int argc, char* argv[])
 {
@@ -33,6 +35,12 @@ int main(int argc, char* argv[])
 	obscura::Import_Nuclear_Data();
 	obscura::Configuration cfg(PROJECT_DIR "bin/config.cfg");
 	cfg.Print_Summary();
+
+	Earth_Model earth_model(*cfg.DM, cfg.DM_distr->Maximum_DM_Speed());
+	Event test_event(0.0, libphysica::Vector({0.0, 2000 * km, 0.0}), libphysica::Vector({0.0, -km / sec, 0.0}));
+
+	std::cout << earth_model.Mean_Free_Path(*cfg.DM, 0.91 * rEarth, 300 * km / sec) / km << std::endl;
+	std::cout << earth_model.Mean_Free_Path_Interpolated(*cfg.DM, 0.91 * rEarth, 300 * km / sec) / km << std::endl;
 
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output

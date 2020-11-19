@@ -45,6 +45,12 @@ int Event::Isodetection_Ring(const libphysica::Vector& vel_earth, unsigned int n
 {
 }
 
+void Event::Propagate(double dt)
+{
+	time += dt;
+	position += dt * velocity;
+}
+
 Event Event::In_Units(double unit_distance, double unit_time) const
 {
 	return Event(libphysica::natural_units::In_Units(time, unit_time), libphysica::natural_units::In_Units(position, unit_distance), libphysica::natural_units::In_Units(velocity, unit_distance / unit_time));

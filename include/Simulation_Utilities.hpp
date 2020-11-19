@@ -26,6 +26,8 @@ struct Event
 	double Isodetection_Angle(const libphysica::Vector& vel_earth) const;
 	int Isodetection_Ring(const libphysica::Vector& vel_earth, unsigned int number_of_rings) const;
 
+	void Propagate(double dt);
+
 	Event In_Units(double unit_distance, double unit_time) const;
 
 	//Overloading the output operator <<
