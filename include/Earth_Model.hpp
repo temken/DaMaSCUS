@@ -44,7 +44,8 @@ class Earth_Model
 	double Mean_Free_Path_Interpolated(obscura::DM_Particle& DM, double r, double vDM);
 
 	obscura::Isotope Sample_Target_Isotope(obscura::DM_Particle& DM, double r, double vDM, std::mt19937& PRNG) const;
-	Event Sample_Next_Event(Event& current_event, obscura::DM_Particle& DM, std::mt19937& PRNG) const;
+	double Lambda(Event& event, double distance);
+	Event Sample_Next_Event(Event& current_event, obscura::DM_Particle& DM, std::mt19937& PRNG);
 
 	void Print_Summary(int mpi_rank = 0) const;
 };

@@ -136,9 +136,62 @@ obscura::Isotope Earth_Model::Sample_Target_Isotope(obscura::DM_Particle& DM, do
 	return obscura::Isotope();
 }
 
-Event Earth_Model::Sample_Next_Event(Event& current_event, obscura::DM_Particle& DM, std::mt19937& PRNG) const
+double Earth_Model::Lambda(Event& event, double distance)
 {
-	return Event();
+	double r		   = event.Radius();
+	double v		   = event.Speed();
+	double cos_alpha   = event.position.Dot(event.velocity) / r / v;
+	unsigned int layer = Current_Density_Layer(r);
+
+	// Parameters and coefficients
+	double L_tilde = sqrt(distance * distance + 2.0 * distance * r * cos_alpha + r * r);
+	double C_1, C_2, C_3, C_4;
+	C_1 = distance;
+	C_3 = distance * (r * r + r * distance * cos_alpha + distance * distance / 3.0) / rEarth / rEarth;
+	if(std::fabs(cos_alpha + 1) > 1e-14)
+	{
+		C_2 = 1.0 / 2.0 / rEarth * (L_tilde * (distance + r * cos_alpha) - r * r * cos_alpha + (1.0 - cos_alpha * cos_alpha) * r * r * log((distance + L_tilde + r * cos_alpha) / ((1 + cos_alpha) * r)));
+		C_4 = 1.0 / 8 / rEarth / rEarth / rEarth * ((5.0 - 3.0 * cos_alpha * cos_alpha) * (cos_alpha * pow(r, 3) * L_tilde - pow(r, 4) * cos_alpha) + 2.0 * distance * distance * L_tilde * (distance + 3.0 * r * cos_alpha) + distance * L_tilde * r * r * (5.0 + cos_alpha * cos_alpha) + 3.0 * pow(r, 4) * pow(1.0 - cos_alpha * cos_alpha, 2) * log((distance + L_tilde + r * cos_alpha) / ((1.0 + cos_alpha) * r)));
+	}
+	else
+	{
+		C_2 = (distance * (distance - 2.0 * r) * sqrt(pow(distance - r, 2))) / (2. * (distance - r)) / rEarth;
+		C_4 = (distance * (distance - 2.0 * r) * sqrt(pow(distance - r, 2)) * (pow(distance, 2) - 2.0 * distance * r + 2.0 * pow(r, 2))) / (4. * (distance - r) * rEarth * rEarth * rEarth);
+	}
+	return mfp_prefactors[Current_Composition_Layer(r)](v) * (density_coefficients[layer][0] * C_1 + density_coefficients[layer][1] * C_2 + density_coefficients[layer][2] * C_3 + density_coefficients[layer][3] * C_4) * gram / cm / cm / cm;
+}
+
+Event Earth_Model::Sample_Next_Event(Event& current_event, obscura::DM_Particle& DM, std::mt19937& PRNG)
+{
+	Event new_event(current_event);
+	double lambda	   = 0.0;
+	double xi		   = libphysica::Sample_Uniform(PRNG, 0.0, 1.0);
+	double log_xi	   = log(1.0 / xi);
+	double r		   = current_event.Radius();
+	double v		   = current_event.Speed();
+	unsigned int layer = Current_Density_Layer(r);
+	while(layer < 10 && lambda < log_xi)
+	{
+		double time_exit			 = Time_of_Layer_Exit(new_event);
+		double max_distance_in_layer = time_exit * v;
+		double lambda_i				 = Lambda(new_event, max_distance_in_layer);
+		if(lambda + lambda_i < log_xi)
+		{
+			lambda += lambda_i;
+			new_event.Propagate(time_exit);
+			layer = Current_Density_Layer(new_event.Radius());
+		}
+		else
+		{
+			std::function<double(double)> f = [this, lambda, &new_event, log_xi](double l) {
+				return lambda + Lambda(new_event, l) - log_xi;
+			};
+			double l = libphysica::Find_Root(f, 0.0, max_distance_in_layer, cm);
+			new_event.Propagate(l / v);
+			break;
+		}
+	}
+	return new_event;
 }
 
 void Earth_Model::Print_Summary(int mpi_rank) const
