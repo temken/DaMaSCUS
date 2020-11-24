@@ -1,6 +1,8 @@
 #ifndef __Simulation_Utilities_hpp_
 #define __Simulation_Utilities_hpp_
 
+#include <random>
+
 // Headers from libphysica
 #include "Linear_Algebra.hpp"
 
@@ -35,7 +37,7 @@ struct Event
 };
 
 // 2. Generator of initial conditions
-extern Event Initial_Conditions(obscura::DM_Distribution& halo_model);
+extern Event Initial_Conditions(obscura::DM_Distribution& halo_model, std::mt19937& PRNG);
 
 }	// namespace DaMaSCUS
 

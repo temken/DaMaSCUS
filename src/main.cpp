@@ -3,6 +3,7 @@
 #include <cstring>	 // for strlen
 #include <fstream>
 #include <iostream>
+#include <random>
 
 // Headers from libphysica
 #include "Natural_Units.hpp"
@@ -31,16 +32,20 @@ int main(int argc, char* argv[])
 	std::cout << PROJECT_NAME << "-" << PROJECT_VERSION << "\tgit:" << GIT_BRANCH << "/" << GIT_COMMIT_HASH << std::endl
 			  << std::endl;
 	////////////////////////////////////////////////////////////////////////
-
+	std::random_device rd;
+	std::mt19937 PRNG(rd());
 	obscura::Import_Nuclear_Data();
 	obscura::Configuration cfg(PROJECT_DIR "bin/config.cfg");
 	cfg.Print_Summary();
 
 	Earth_Model earth_model(*cfg.DM, cfg.DM_distr->Maximum_DM_Speed());
-	Event test_event(0.0, libphysica::Vector({0.0, 2000 * km, 0.0}), libphysica::Vector({0.0, -km / sec, 0.0}));
+	Event test_event(0.0, libphysica::Vector({0.0, 1.0 * meter, 0.0}), libphysica::Vector({0.0, km / sec, 0.0}));
 
-	std::cout << earth_model.Mean_Free_Path(*cfg.DM, 0.91 * rEarth, 300 * km / sec) / km << std::endl;
-	std::cout << earth_model.Mean_Free_Path_Interpolated(*cfg.DM, 0.91 * rEarth, 300 * km / sec) / km << std::endl;
+	std::cout << test_event.In_Units(km, sec) << std::endl;
+	std::cout << earth_model.Sample_Next_Event(test_event, *cfg.DM, PRNG).In_Units(km, sec) << std::endl;
+
+	Event ic = Initial_Conditions(*cfg.DM_distr, PRNG);
+	std::cout << ic.In_Units(km, sec) << "\t" << ic.Radius() / rEarth << std::endl;
 
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output
