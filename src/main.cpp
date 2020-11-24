@@ -15,6 +15,7 @@
 #include "Target_Nucleus.hpp"
 
 #include "Earth_Model.hpp"
+#include "Simulation_Trajectory.hpp"
 #include "version.hpp"
 
 using namespace libphysica::natural_units;
@@ -44,8 +45,12 @@ int main(int argc, char* argv[])
 	std::cout << test_event.In_Units(km, sec) << std::endl;
 	std::cout << earth_model.Sample_Next_Event(test_event, *cfg.DM, PRNG).In_Units(km, sec) << std::endl;
 
-	Event ic = Initial_Conditions(*cfg.DM_distr, PRNG);
-	std::cout << ic.In_Units(km, sec) << "\t" << ic.Radius() / rEarth << std::endl;
+	Event ic = Initial_Conditions(*cfg.DM_distr, 1.5 * rEarth, PRNG);
+
+	Trajectory traj = Simulate_Trajectory(ic, earth_model, *cfg.DM, PRNG);
+	std::cout << traj.Number_of_Scatterings() << std::endl;
+	std::cout << traj.Points_of_Depth_Crossing(100 * km).size() << std::endl;
+	traj.Print_Summary();
 
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output
