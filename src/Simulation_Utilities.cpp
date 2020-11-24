@@ -37,6 +37,14 @@ double Event::Angular_Momentum() const
 	return position.Cross(velocity).Norm();
 }
 
+Event Event::Point_of_Minimum_Distance() const
+{
+	double v	 = Speed();
+	double xv	 = position * velocity;
+	double t_min = -xv / v / v;
+	return Event(time + t_min, position + t_min * velocity, velocity);
+}
+
 double Event::Isodetection_Angle(const libphysica::Vector& vel_earth) const
 {
 	return acos(position.Normalized().Dot(vel_earth.Normalized()));
@@ -73,7 +81,7 @@ std::ostream& operator<<(std::ostream& output, const Event& event)
 }
 
 // 2. Generator of initial conditions
-Event Initial_Conditions(obscura::DM_Distribution& halo_model, std::mt19937& PRNG)
+Event Initial_Conditions(obscura::DM_Distribution& halo_model, double initial_distance, std::mt19937& PRNG)
 {
 	// 1. Asymptotic initial velocity
 	// 1.1. Sample a velocity vector in the galactic rest frame
@@ -105,7 +113,7 @@ Event Initial_Conditions(obscura::DM_Distribution& halo_model, std::mt19937& PRN
 	double phi_disk						= libphysica::Sample_Uniform(PRNG, 0.0, 2.0 * M_PI);
 	double xi							= libphysica::Sample_Uniform(PRNG, 0.0, 1.0);
 	double impact_parameter				= sqrt(xi) * impact_parameter_max;
-	libphysica::Vector initial_position = 1.5 * rEarth * e_z + impact_parameter * (cos(phi_disk) * e_x + sin(phi_disk) * e_y);
+	libphysica::Vector initial_position = initial_distance * e_z + impact_parameter * (cos(phi_disk) * e_x + sin(phi_disk) * e_y);
 
 	return Event(0.0, initial_position, initial_velocity);
 }

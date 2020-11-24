@@ -25,6 +25,8 @@ struct Event
 	double Speed() const;
 	double Angular_Momentum() const;
 
+	Event Point_of_Minimum_Distance() const;
+
 	double Isodetection_Angle(const libphysica::Vector& vel_earth) const;
 	int Isodetection_Ring(const libphysica::Vector& vel_earth, unsigned int number_of_rings) const;
 
@@ -37,7 +39,7 @@ struct Event
 };
 
 // 2. Generator of initial conditions
-extern Event Initial_Conditions(obscura::DM_Distribution& halo_model, std::mt19937& PRNG);
+extern Event Initial_Conditions(obscura::DM_Distribution& halo_model, double initial_distance, std::mt19937& PRNG);
 
 }	// namespace DaMaSCUS
 

@@ -1,11 +1,11 @@
 #ifndef VERSION_HPP
 #define VERSION_HPP
 
-#define AUTHOR 	"Timon Emken"
-#define YEAR 	"2020"
+#define AUTHOR "Timon Emken"
+#define YEAR "2020"
 
 #define PROJECT_NAME "@PROJECT_NAME@"
-#define PROJECT_VERSION  "@PROJECT_VERSION@"
+#define PROJECT_VERSION "@PROJECT_VERSION@"
 #define PROJECT_VERSION_MAJOR "@PROJECT_VERSION_MAJOR@"
 #define PROJECT_VERSION_MINOR "@PROJECT_VERSION_MINOR@"
 #define PROJECT_VERSION_PATCH "@PROJECT_VERSION_PATCH@"
@@ -14,5 +14,7 @@
 #define GIT_COMMIT_HASH "@GIT_COMMIT_HASH@"
 #define PROJECT_DIR "@PROJECT_SOURCE_DIR@/"
 #define TOP_LEVEL_DIR "@CMAKE_SOURCE_DIR@/"
+
+#define SEPARATOR "\n##############################################################\n"
 
 #endif
