@@ -1,19 +1,63 @@
-# Option A: If a static library is built. (see src/CMakeLists.txt)
-add_executable(tests
-	test_module.cpp)
+# 1. Test executable
+add_test(NAME executable_test COMMAND DaMaSCUS config.cfg
+	WORKING_DIRECTORY ${BIN_DIR})
 
-target_link_libraries(tests 
+# 2. Unit tests: Data_Generation.xpp
+add_executable(test_Data_Generation
+	test_Data_Generation.cpp)
+target_link_libraries(test_Data_Generation 
 	PRIVATE
 		lib_DaMaSCUS
 		gtest_main ) #contains the main function
-
-target_include_directories(tests
+target_include_directories(test_Data_Generation
 	PRIVATE
 		${GENERATED_DIR} )
+target_compile_options(test_Data_Generation PUBLIC -Wall -pedantic)
+install(TARGETS test_Data_Generation DESTINATION ${TESTS_DIR})
+add_test(NAME test_Data_Generation COMMAND test_Data_Generation
+	WORKING_DIRECTORY ${TESTS_DIR} )
 
-target_compile_options(tests PUBLIC -Wall -pedantic)
+# 3. Unit tests: Earth_Model.xpp
+add_executable(test_Earth_Model
+	test_Earth_Model.cpp)
+target_link_libraries(test_Earth_Model 
+	PRIVATE
+		lib_DaMaSCUS
+		gtest_main ) #contains the main function
+target_include_directories(test_Earth_Model
+	PRIVATE
+		${GENERATED_DIR} )
+target_compile_options(test_Earth_Model PUBLIC -Wall -pedantic)
+install(TARGETS test_Earth_Model DESTINATION ${TESTS_DIR})
+add_test(NAME test_Earth_Model COMMAND test_Earth_Model
+	WORKING_DIRECTORY ${TESTS_DIR} )
 
-install(TARGETS tests DESTINATION ${TESTS_DIR})
+# 4. Unit tests: Simulation_Trajectory.xpp
+add_executable(test_Simulation_Trajectory
+	test_Simulation_Trajectory.cpp)
+target_link_libraries(test_Simulation_Trajectory 
+	PRIVATE
+		lib_DaMaSCUS
+		gtest_main ) #contains the main function
+target_include_directories(test_Simulation_Trajectory
+	PRIVATE
+		${GENERATED_DIR} )
+target_compile_options(test_Simulation_Trajectory PUBLIC -Wall -pedantic)
+install(TARGETS test_Simulation_Trajectory DESTINATION ${TESTS_DIR})
+add_test(NAME test_Simulation_Trajectory COMMAND test_Simulation_Trajectory
+	WORKING_DIRECTORY ${TESTS_DIR} )
 
-add_test(NAME all_tests COMMAND tests
+# 5. Unit tests: Simulation_Utilities.xpp
+add_executable(test_Simulation_Utilities
+	test_Simulation_Utilities.cpp)
+target_link_libraries(test_Simulation_Utilities 
+	PRIVATE
+		lib_DaMaSCUS
+		gtest_main ) #contains the main function
+target_include_directories(test_Simulation_Utilities
+	PRIVATE
+		${GENERATED_DIR} )
+target_compile_options(test_Simulation_Utilities PUBLIC -Wall -pedantic)
+install(TARGETS test_Simulation_Utilities DESTINATION ${TESTS_DIR})
+add_test(NAME test_Simulation_Utilities COMMAND test_Simulation_Utilities
 	WORKING_DIRECTORY ${TESTS_DIR} )

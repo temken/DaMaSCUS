@@ -18,7 +18,10 @@
 
 	# Static library
 	add_library(lib_DaMaSCUS STATIC
-	    module.cpp)
+		Data_Generation.cpp
+		Earth_Model.cpp 
+		Simulation_Trajectory.cpp
+		Simulation_Utilities.cpp )
 
 	set_target_properties(lib_DaMaSCUS PROPERTIES PREFIX "")
 
@@ -28,7 +31,7 @@
 		PUBLIC
 			coverage_config
 			libobscura
-			libphysica)
+			${MPI_CXX_LIBRARIES})
 
 	target_include_directories(lib_DaMaSCUS
 		PRIVATE

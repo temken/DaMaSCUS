@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(DaMaSCUS VERSION "1.2")
+project(DaMaSCUS VERSION "2.1.0")
 
 # Use C++-11
 set(CMAKE_CXX_STANDARD 11)
@@ -16,6 +16,10 @@ set(LIB_DIR       ${PROJECT_SOURCE_DIR}/lib)
 set(SRC_DIR       ${PROJECT_SOURCE_DIR}/src)
 set(TESTS_DIR     ${PROJECT_SOURCE_DIR}/tests)
 set(EXTERNAL_DIR  ${PROJECT_SOURCE_DIR}/external)
+
+#External projects
+find_package(MPI REQUIRED)
+include_directories(${MPI_INCLUDE_PATH})
 
 #External projects
 include(FetchContent)

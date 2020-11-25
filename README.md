@@ -1,9 +1,8 @@
-[![Build Status](https://github.com/temken/template_cpp_cmake_obscura/workflows/Build%20Status/badge.svg)](https://github.com/temken/template_cpp_cmake_obscura/actions)
-[![codecov](https://codecov.io/gh/temken/template_cpp_cmake_obscura/branch/master/graph/badge.svg)](https://codecov.io/gh/temken/template_cpp_cmake_obscura)
+[![Build Status](https://github.com/temken/DaMaSCUS/workflows/Build%20Status/badge.svg)](https://github.com/temken/DaMaSCUS/actions)
+[![codecov](https://codecov.io/gh/temken/DaMaSCUS/branch/v2/graph/badge.svg)](https://codecov.io/gh/temken/DaMaSCUS)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-# template_cpp_cmake_obscura
-A template for c++ projects with the following features.
+# DaMaSCUS v2.1.0
 
 - build with [CMake](https://cmake.org/)
 - continuous integration with [Github Actions](https://github.com/actions)
