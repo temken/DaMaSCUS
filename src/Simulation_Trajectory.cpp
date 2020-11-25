@@ -2,6 +2,9 @@
 
 #include <fstream>
 
+// Headers from libphysica
+#include "Statistics.hpp"
+
 #include "version.hpp"
 
 namespace DaMaSCUS
@@ -65,15 +68,14 @@ std::vector<Event> Trajectory::Points_of_Depth_Crossing(double underground_depth
 		double r_min = events[i].Point_of_Minimum_Distance().Radius();
 		if(r_min < R)
 		{
-			double x   = events[i].Radius();
-			double v   = events[i].Speed();
-			double xv  = events[i].position * events[i].velocity;
-			double t_1 = (-xv - sqrt(R * R * v * v - v * v * x * x + xv * xv)) / v / v;
-			double t_2 = (-xv + sqrt(R * R * v * v - v * v * x * x + xv * xv)) / v / v;
-			if(t_1 > 0.0 && t_1 < events[i + 1].time - events[i].time)
-				result.push_back(Event(events[i].time + t_1, events[i].position + t_1 * events[i].velocity, events[i].velocity));
-			if(t_2 > 0.0 && t_2 < events[i + 1].time - events[i].time)
-				result.push_back(Event(events[i].time + t_2, events[i].position + t_2 * events[i].velocity, events[i].velocity));
+			double x						   = events[i].Radius();
+			double v						   = events[i].Speed();
+			double xv						   = events[i].position * events[i].velocity;
+			double aux						   = sqrt(R * R * v * v - v * v * x * x + xv * xv);
+			std::vector<double> crossing_times = {(-xv - aux) / v / v, (-xv + aux) / v / v};
+			for(auto& t : crossing_times)
+				if(t > 0.0 && t < events[i + 1].time - events[i].time)
+					result.push_back(Event(events[i].time + t, events[i].position + t * events[i].velocity, events[i].velocity));
 		}
 	}
 	return result;
@@ -103,8 +105,28 @@ void Trajectory::Print_Summary(int mpi_rank) const
 	}
 }
 
-void Scatter(Event& current_event, Earth_Model& earth_model, obscura::DM_Particle& DM)
+void Scatter(Event& current_event, obscura::DM_Particle& DM, const obscura::Isotope& target, std::mt19937& PRNG)
 {
+	libphysica::Vector vel_initial	  = current_event.velocity;
+	libphysica::Vector vel_normalized = vel_initial.Normalized();
+	double v_initial				  = vel_initial.Norm();
+
+	//Find cos alpha
+	// double cosalpha = DM.Sample_Scattering_Angle(xi, target, vDM, IS_Angle);
+	double cosalpha = 2.0 * libphysica::Sample_Uniform(PRNG, 0.0, 1.0) - 1.0;
+
+	//Construction of n, the unit vector pointing into the direction of vfinal.
+	double cosphi	= cos(libphysica::Sample_Uniform(PRNG, 0.0, 2.0 * M_PI));
+	double sinphi	= sqrt(1.0 - cosphi * cosphi);
+	double sinalpha = sqrt(1.0 - cosalpha * cosalpha);
+	double aux		= sqrt(1.0 - vel_normalized[2] * vel_normalized[2]);
+	libphysica::Vector n(
+		{cosalpha * vel_normalized[0] + (sinalpha * (-vel_normalized[0] * vel_normalized[2] * cosphi + vel_normalized[1] * sinphi)) / aux,
+		 cosalpha * vel_normalized[1] + (sinalpha * (-vel_normalized[1] * vel_normalized[2] * cosphi - vel_normalized[0] * sinphi)) / aux,
+		 cosalpha * vel_normalized[2] + aux * cosphi * sinalpha});
+
+	libphysica::Vector vNew = target.mass / (DM.mass + target.mass) * v_initial * n + DM.mass / (DM.mass + target.mass) * vel_initial;
+	current_event.velocity	= vNew;
 }
 
 Trajectory Simulate_Trajectory(Event initial_conditions, Earth_Model& earth_model, obscura::DM_Particle& DM, std::mt19937& PRNG, double minimal_speed)
@@ -128,10 +150,14 @@ Trajectory Simulate_Trajectory(Event initial_conditions, Earth_Model& earth_mode
 	{
 		current_event = earth_model.Sample_Next_Event(current_event, DM, PRNG);
 		r			  = current_event.Radius();
+		double v	  = current_event.Speed();
 		if(r < rEarth)
-			Scatter(current_event, earth_model, DM);
+		{
+			obscura::Isotope target_isotope = earth_model.Sample_Target_Isotope(DM, r, v, PRNG);
+			Scatter(current_event, DM, target_isotope, PRNG);
+		}
 		else
-			current_event.Propagate(rEarth / current_event.Speed());
+			current_event.Propagate(rEarth / v);
 
 		events.push_back(current_event);
 	}
