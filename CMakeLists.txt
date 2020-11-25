@@ -18,6 +18,10 @@ set(TESTS_DIR     ${PROJECT_SOURCE_DIR}/tests)
 set(EXTERNAL_DIR  ${PROJECT_SOURCE_DIR}/external)
 
 #External projects
+find_package(MPI REQUIRED)
+include_directories(${MPI_INCLUDE_PATH})
+
+#External projects
 include(FetchContent)
 # obscura
 set(OBSCURA_DIR   ${EXTERNAL_DIR}/obscura)

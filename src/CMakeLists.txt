@@ -31,7 +31,7 @@
 		PUBLIC
 			coverage_config
 			libobscura
-			libphysica)
+			${MPI_CXX_LIBRARIES})
 
 	target_include_directories(lib_DaMaSCUS
 		PRIVATE
