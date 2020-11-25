@@ -25,8 +25,8 @@ class Earth_Model
 	std::vector<std::vector<double>> density_coefficients;
 
 	// Nuclear composition
-	std::vector<std::vector<obscura::Element>> elements;
-	std::vector<std::vector<double>> nuclear_abundances;
+	std::vector<std::vector<obscura::Isotope>> target_isotopes;
+	std::vector<std::vector<double>> isotope_abundances;
 
 	// Interpolated speed-dependent prefactor of the mean free path
 	std::vector<libphysica::Interpolation> mfp_prefactors;

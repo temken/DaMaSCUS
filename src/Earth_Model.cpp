@@ -15,31 +15,43 @@ using namespace libphysica::natural_units;
 Earth_Model::Earth_Model(obscura::DM_Particle& DM, double vMax)
 : name("Preliminary Reference Earth Model")
 {
-	layer_transitions	 = {1221.5 * km, 3480 * km, 5701 * km, 5771 * km, 5971 * km, 6151 * km, 6346.6 * km, 6356 * km, 6368 * km, 6371 * km};
-	density_coefficients = {{13.0885, 0.0, -8.8381, 0.0},
-							{12.5815, -1.2638, -3.6426, -5.5281},
-							{7.9565, -6.4761, 5.5283, -3.0807},
-							{5.3197, -1.4836, 0.0, 0.0},
-							{11.2494, -8.0298, 0.0, 0.0},
-							{7.1089, -3.8045, 0.0, 0.0},
-							{2.6910, 0.6924, 0.0, 0.0},
-							{2.9, 0.0, 0.0, 0.0},
-							{2.6, 0.0, 0.0, 0.0},
-							{2.6, 0.0, 0.0, 0.0},
-							{0.0, 0.0, 0.0, 0.0}};
-
-	elements = {
-		{obscura::Get_Element(26), obscura::Get_Element(14), obscura::Get_Element(28), obscura::Get_Element(16), obscura::Get_Element(24), obscura::Get_Element(25), obscura::Get_Element(15), obscura::Get_Element(6), obscura::Get_Element(1)},
-		{obscura::Get_Element(8), obscura::Get_Element(12), obscura::Get_Element(14), obscura::Get_Element(26), obscura::Get_Element(20), obscura::Get_Element(13), obscura::Get_Element(11), obscura::Get_Element(24), obscura::Get_Element(28), obscura::Get_Element(25), obscura::Get_Element(16), obscura::Get_Element(6), obscura::Get_Element(1), obscura::Get_Element(15)},
-		{obscura::Get_Element(8), obscura::Get_Element(14), obscura::Get_Element(13), obscura::Get_Element(26), obscura::Get_Element(20), obscura::Get_Element(19), obscura::Get_Element(11), obscura::Get_Element(12)}};
-	nuclear_abundances = {
+	layer_transitions							   = {1221.5 * km, 3480 * km, 5701 * km, 5771 * km, 5971 * km, 6151 * km, 6346.6 * km, 6356 * km, 6368 * km, 6371 * km};
+	density_coefficients						   = {{13.0885, 0.0, -8.8381, 0.0},
+							  {12.5815, -1.2638, -3.6426, -5.5281},
+							  {7.9565, -6.4761, 5.5283, -3.0807},
+							  {5.3197, -1.4836, 0.0, 0.0},
+							  {11.2494, -8.0298, 0.0, 0.0},
+							  {7.1089, -3.8045, 0.0, 0.0},
+							  {2.6910, 0.6924, 0.0, 0.0},
+							  {2.9, 0.0, 0.0, 0.0},
+							  {2.6, 0.0, 0.0, 0.0},
+							  {2.6, 0.0, 0.0, 0.0},
+							  {0.0, 0.0, 0.0, 0.0}};
+	std::vector<std::vector<unsigned int>> Z_lists = {
+		{26, 14, 28, 16, 24, 25, 15, 6, 1},
+		{8, 12, 14, 26, 20, 13, 11, 24, 28, 25, 16, 6, 1, 15},
+		{8, 14, 13, 26, 20, 19, 11, 12}};
+	std::vector<std::vector<double>> element_abundances = {
 		{0.855, 0.06, 0.052, 0.019, 0.009, 0.003, 0.002, 0.002, 0.0006},
 		{0.44, 0.228, 0.21, 0.0626, 0.0253, 0.0235, 0.0027, 0.0026, 0.002, 0.001, 0.0003, 0.0001, 0.0001, 0.00009},
 		{0.466, 0.277, 0.081, 0.05, 0.036, 0.028, 0.026, 0.021}};
 
+	target_isotopes	   = {{}, {}, {}};
+	isotope_abundances = {{}, {}, {}};
+	for(unsigned int i = 0; i < Z_lists.size(); i++)
+		for(unsigned int j = 0; j < element_abundances.size(); j++)
+		{
+			obscura::Element element = obscura::Get_Element(Z_lists[i][j]);
+			for(auto& isotope : element.isotopes)
+			{
+				target_isotopes[i].push_back(isotope);
+				isotope_abundances[i].push_back(element_abundances[i][j]);
+			}
+		}
+
 	// Interpolate lambda^-1 / rho as a function of the DM speed.
 	std::vector<double> speeds = libphysica::Linear_Space(0.0, vMax, 200);
-	for(unsigned int i = 0; i < elements.size(); i++)
+	for(unsigned int i = 0; i < target_isotopes.size(); i++)
 	{
 		std::vector<double> prefactors;
 		double r = 0.5 * rEarth;   //cancels
@@ -111,29 +123,49 @@ double Earth_Model::Mass_Density(double r) const
 
 double Earth_Model::Mean_Free_Path(obscura::DM_Particle& DM, double r, double vDM)
 {
-	unsigned int composition_layer = Current_Composition_Layer(r);
-	double rho					   = Mass_Density(r);
-	double lambda_inverse		   = 0.0;
-	for(unsigned int i = 0; i < elements[composition_layer].size(); i++)
+	unsigned int layer	  = Current_Composition_Layer(r);
+	double rho			  = Mass_Density(r);
+	double lambda_inverse = 0.0;
+	for(unsigned int i = 0; i < target_isotopes[layer].size(); i++)
 	{
-		double abundance = nuclear_abundances[composition_layer][i];
-		for(auto& isotope : elements[composition_layer][i].isotopes)
-			lambda_inverse += abundance * isotope.abundance * rho / isotope.mass * DM.Sigma_Nucleus(isotope, vDM);
+		obscura::Isotope isotope = target_isotopes[layer][i];
+		lambda_inverse += isotope_abundances[layer][i] * isotope.abundance * rho / isotope.mass * DM.Sigma_Nucleus(isotope, vDM);
 	}
 	return 1.0 / lambda_inverse;
 }
 
 double Earth_Model::Mean_Free_Path_Interpolated(obscura::DM_Particle& DM, double r, double vDM)
 {
-	unsigned int composition_layer = Current_Composition_Layer(r);
-	double rho					   = Mass_Density(r);
-	return 1.0 / (mfp_prefactors[composition_layer](vDM) * rho);
+	unsigned int layer = Current_Composition_Layer(r);
+	double rho		   = Mass_Density(r);
+	return 1.0 / (mfp_prefactors[layer](vDM) * rho);
 }
 
 obscura::Isotope Earth_Model::Sample_Target_Isotope(obscura::DM_Particle& DM, double r, double vDM, std::mt19937& PRNG) const
 {
-	// double xi = libphysica::Sample_Uniform(PRNG, 0.0, 1.0);
-	return obscura::Isotope();
+	unsigned int layer	 = Current_Composition_Layer(r);
+	double normalization = 0.0;
+	std::vector<double> probabilities;
+	for(unsigned int i = 0; i < target_isotopes[layer].size(); i++)
+	{
+		obscura::Isotope isotope = target_isotopes[layer][i];
+		double lambda_i			 = isotope_abundances[layer][i] * isotope.abundance / isotope.mass * DM.Sigma_Nucleus(isotope, vDM);
+		normalization += lambda_i;
+		probabilities.push_back(lambda_i);
+	}
+	for(auto& probability : probabilities)
+		probability /= normalization;
+
+	double xi  = libphysica::Sample_Uniform(PRNG, 0.0, 1.0);
+	double sum = 0.0;
+	for(unsigned int i = 0; i < target_isotopes[layer].size(); i++)
+	{
+		sum += probabilities[i];
+		if(sum > xi)
+			return target_isotopes[layer][i];
+	}
+	std::cerr << "Error in Earth_Model::Sample_Target_Isotope(): No isotope could be sampled." << std::endl;
+	std::exit(EXIT_FAILURE);
 }
 
 double Earth_Model::Lambda(Event& event, double distance)
