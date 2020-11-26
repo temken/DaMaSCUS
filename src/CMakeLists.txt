@@ -21,7 +21,8 @@
 		Data_Generation.cpp
 		Earth_Model.cpp 
 		Simulation_Trajectory.cpp
-		Simulation_Utilities.cpp )
+		Simulation_Utilities.cpp
+		Underground_Distribution.cpp )
 
 	set_target_properties(lib_DaMaSCUS PROPERTIES PREFIX "")
 

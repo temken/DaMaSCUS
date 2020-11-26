@@ -13,11 +13,13 @@
 // Headers from obscura
 #include "Astronomy.hpp"
 #include "Configuration.hpp"
+#include "DM_Particle_Standard.hpp"
 #include "Target_Nucleus.hpp"
 
 #include "Data_Generation.hpp"
 #include "Earth_Model.hpp"
 #include "Simulation_Trajectory.hpp"
+#include "Underground_Distribution.hpp"
 #include "version.hpp"
 
 using namespace libphysica::natural_units;
@@ -59,19 +61,27 @@ int main(int argc, char* argv[])
 	Earth_Model earth_model(*cfg.DM, cfg.DM_distr->Maximum_DM_Speed());
 	////////////////////////////////////////////////////////////////////////
 
-	Event test_event(0.0, libphysica::Vector({0.0, 1.0 * meter, 0.0}), libphysica::Vector({0.0, km / sec, 0.0}));
+	unsigned int number_of_isodetection_rings = 30;
+	double underground_depth				  = 1.4 * km;
+	unsigned int sample_size				  = 1000;
+	double v_min							  = 0.0;
 
-	Event ic = Initial_Conditions(*cfg.DM_distr, 1.5 * rEarth, PRNG);
-
-	Trajectory traj = Simulate_Trajectory(ic, earth_model, *cfg.DM, PRNG);
+	obscura::DM_Particle_SI reference_DM(cfg.DM->mass, 1.0e-80 * cm * cm);
+	earth_model.Interpolate_Mean_Free_Path(reference_DM, cfg.DM_distr->Maximum_DM_Speed());
+	Simulation_Data reference_data(sample_size, underground_depth, v_min, number_of_isodetection_rings);
+	reference_data.Generate_Data(reference_DM, earth_model, *cfg.DM_distr);
 	if(mpi_rank == 0)
-		log << traj.Summary() << std::endl;
+		log << reference_data.Summary() << std::endl;
 
-	Simulation_Data simulation_data(10000, 1.4 * km, 200.0 * km / sec, 20);
+	earth_model.Interpolate_Mean_Free_Path(*cfg.DM, cfg.DM_distr->Maximum_DM_Speed());
+	Simulation_Data simulation_data(sample_size, underground_depth, v_min, number_of_isodetection_rings);
 	simulation_data.Generate_Data(*cfg.DM, earth_model, *cfg.DM_distr);
 	if(mpi_rank == 0)
 		log << simulation_data.Summary() << std::endl;
 
+	unsigned int iso_ring = 0;
+	Underground_Distribution distr(simulation_data, reference_data, iso_ring, cfg.DM_distr->DM_density);
+	std::cout << distr.DM_density * cm * cm * cm << std::endl;
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output
 	MPI_Barrier(MPI_COMM_WORLD);

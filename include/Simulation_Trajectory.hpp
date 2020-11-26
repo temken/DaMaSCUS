@@ -20,9 +20,8 @@ namespace DaMaSCUS
 class Trajectory
 {
   private:
-	std::vector<Event> events;
-
   public:
+	std::vector<Event> events;
 	Trajectory(std::vector<Event>& event_list);
 
 	unsigned int Number_of_Scatterings() const;

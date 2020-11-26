@@ -40,6 +40,7 @@ class Earth_Model
 
 	double Mass_Density(double r) const;
 
+	void Interpolate_Mean_Free_Path(obscura::DM_Particle& DM, double vMax);
 	double Mean_Free_Path(obscura::DM_Particle& DM, double r, double vDM);
 	double Mean_Free_Path_Interpolated(obscura::DM_Particle& DM, double r, double vDM);
 

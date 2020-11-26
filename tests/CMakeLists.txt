@@ -61,3 +61,18 @@ target_compile_options(test_Simulation_Utilities PUBLIC -Wall -pedantic)
 install(TARGETS test_Simulation_Utilities DESTINATION ${TESTS_DIR})
 add_test(NAME test_Simulation_Utilities COMMAND test_Simulation_Utilities
 	WORKING_DIRECTORY ${TESTS_DIR} )
+
+# 6. Unit tests: Simulation_Utilities.xpp
+add_executable(test_Underground_Distribution
+test_Underground_Distribution.cpp)
+target_link_libraries(test_Underground_Distribution 
+PRIVATE
+	lib_DaMaSCUS
+	gtest_main ) #contains the main function
+target_include_directories(test_Underground_Distribution
+PRIVATE
+	${GENERATED_DIR} )
+target_compile_options(test_Underground_Distribution PUBLIC -Wall -pedantic)
+install(TARGETS test_Underground_Distribution DESTINATION ${TESTS_DIR})
+add_test(NAME test_Underground_Distribution COMMAND test_Underground_Distribution
+WORKING_DIRECTORY ${TESTS_DIR} )

@@ -16,7 +16,7 @@ namespace DaMaSCUS
 using namespace libphysica::natural_units;
 
 Simulation_Data::Simulation_Data(unsigned int sample_size, double depth, double v_min, unsigned int iso_rings)
-: min_sample_size_above_threshold(sample_size), minimum_speed_threshold(v_min), isodetection_rings(iso_rings), underground_depth(depth), number_of_trajectories(0), number_of_free_particles(0), average_number_of_scatterings(0.0), computing_time(0.0), number_of_data_points(std::vector<unsigned long int>(iso_rings, 0)), data(iso_rings, std::vector<libphysica::DataPoint>())
+: min_sample_size_above_threshold(sample_size), minimum_speed_threshold(v_min), isodetection_rings(iso_rings), underground_depth(depth), number_of_trajectories(0), number_of_free_particles(0), number_of_stuck_particles(0), average_number_of_scatterings(0.0), computing_time(0.0), number_of_data_points(std::vector<unsigned long int>(iso_rings, 0)), data(iso_rings, std::vector<libphysica::DataPoint>())
 {
 	MPI_Comm_size(MPI_COMM_WORLD, &mpi_processes);
 	MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
@@ -53,6 +53,9 @@ void Simulation_Data::Generate_Data(obscura::DM_Particle& DM, Earth_Model& earth
 		unsigned int number_of_scatterings = trajectory.Number_of_Scatterings();
 		if(number_of_scatterings == 0)
 			number_of_free_particles++;
+		if(trajectory.events.back().Radius() < rEarth)
+			number_of_stuck_particles++;
+
 		average_number_of_scatterings = 1.0 / number_of_trajectories * ((number_of_trajectories - 1) * average_number_of_scatterings + number_of_scatterings);
 
 		for(auto& event : trajectory.Points_of_Depth_Crossing(underground_depth))
@@ -149,9 +152,22 @@ double Simulation_Data::Average_Scatterings() const
 	return average_number_of_scatterings;
 }
 
+double Simulation_Data::Average_Weight(unsigned int iso_ring) const
+{
+	double weight_sum = 0.0;
+	for(auto& data_point : data[iso_ring])
+		weight_sum += data_point.weight;
+	return weight_sum / data[iso_ring].size();
+}
+
 double Simulation_Data::Free_Ratio() const
 {
 	return 1.0 * number_of_free_particles / number_of_trajectories;
+}
+
+double Simulation_Data::Stuck_Ratio() const
+{
+	return 1.0 * number_of_stuck_particles / number_of_trajectories;
 }
 
 double Simulation_Data::Lowest_Speed(unsigned int iso_ring) const
@@ -182,7 +198,8 @@ std::string Simulation_Data::Summary()
 	   << "\tGenerated data points (total):\t" << number_of_data_points_tot << std::endl
 	   << "\tData points per trajectory:\t" << 1.0 * number_of_data_points_tot / number_of_trajectories << std::endl
 	   << "\tAverage # of scatterings:\t" << libphysica::Round(average_number_of_scatterings) << std::endl
-	   << "\tFree particles [%]:\t\t" << libphysica::Round(100.0 * Free_Ratio()) << std::endl;
+	   << "\tFree particles [%]:\t\t" << libphysica::Round(100.0 * Free_Ratio()) << std::endl
+	   << "\tStuck particles [%]:\t\t" << libphysica::Round(100.0 * Stuck_Ratio()) << std::endl;
 
 	if(isodetection_rings > 1)
 	{

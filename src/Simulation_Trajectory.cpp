@@ -131,6 +131,7 @@ void Scatter(Event& current_event, obscura::DM_Particle& DM, const obscura::Isot
 
 Trajectory Simulate_Trajectory(Event initial_conditions, Earth_Model& earth_model, obscura::DM_Particle& DM, std::mt19937& PRNG, double minimal_speed)
 {
+	double initial_radius = initial_conditions.Radius();
 	std::vector<Event> events;
 	events.push_back(initial_conditions);
 	Event current_event = initial_conditions;
@@ -146,18 +147,21 @@ Trajectory Simulate_Trajectory(Event initial_conditions, Earth_Model& earth_mode
 
 	// 2. Underground propagation
 	double r = current_event.Radius();
+	double v = current_event.Speed();
 	while(r < rEarth)
 	{
 		current_event = earth_model.Sample_Next_Event(current_event, DM, PRNG);
 		r			  = current_event.Radius();
-		double v	  = current_event.Speed();
-		if(r < rEarth)
+		v			  = current_event.Speed();
+		if(r > rEarth)
+			current_event.Propagate((initial_radius - rEarth) / v);
+		else if(v < minimal_speed)
+			break;
+		else
 		{
 			obscura::Isotope target_isotope = earth_model.Sample_Target_Isotope(DM, r, v, PRNG);
 			Scatter(current_event, DM, target_isotope, PRNG);
 		}
-		else
-			current_event.Propagate(rEarth / v);
 
 		events.push_back(current_event);
 	}

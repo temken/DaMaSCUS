@@ -48,17 +48,7 @@ Earth_Model::Earth_Model(obscura::DM_Particle& DM, double vMax)
 				isotope_abundances[i].push_back(element_abundances[i][j]);
 			}
 		}
-
-	// Interpolate lambda^-1 / rho as a function of the DM speed.
-	std::vector<double> speeds = libphysica::Linear_Space(0.0, vMax, 200);
-	for(unsigned int i = 0; i < target_isotopes.size(); i++)
-	{
-		std::vector<double> prefactors;
-		double r = 0.5 * rEarth;   //cancels
-		for(auto& v : speeds)
-			prefactors.push_back(1.0 / Mean_Free_Path(DM, r, v) / Mass_Density(r));
-		mfp_prefactors.push_back(libphysica::Interpolation(speeds, prefactors));
-	}
+	Interpolate_Mean_Free_Path(DM, vMax);
 }
 
 unsigned int Earth_Model::Current_Density_Layer(double r) const
@@ -119,6 +109,22 @@ double Earth_Model::Mass_Density(double r) const
 	for(unsigned int i = 0; i < 4; i++)
 		rho += density_coefficients[layer][i] * pow(x, i);
 	return rho * gram / cm / cm / cm;
+}
+
+void Earth_Model::Interpolate_Mean_Free_Path(obscura::DM_Particle& DM, double vMax)
+{
+	// Interpolate lambda^-1 / rho as a function of the DM speed.
+	std::vector<double> speeds = libphysica::Linear_Space(0.0, vMax, 200);
+	mfp_prefactors.clear();
+
+	for(unsigned int i = 0; i < target_isotopes.size(); i++)
+	{
+		std::vector<double> prefactors;
+		double r = 0.5 * rEarth;   //cancels
+		for(auto& v : speeds)
+			prefactors.push_back(1.0 / Mean_Free_Path(DM, r, v) / Mass_Density(r));
+		mfp_prefactors.push_back(libphysica::Interpolation(speeds, prefactors));
+	}
 }
 
 double Earth_Model::Mean_Free_Path(obscura::DM_Particle& DM, double r, double vDM)
