@@ -1,6 +1,7 @@
 #include "Simulation_Trajectory.hpp"
 
 #include <fstream>
+#include <sstream>
 
 // Headers from libphysica
 #include "Statistics.hpp"
@@ -91,18 +92,17 @@ void Trajectory::Save_to_File(std::string& file_path) const
 		  << In_Units(event.velocity[0], km / sec) << "\t" << In_Units(event.velocity[1], km / sec) << "\t" << In_Units(event.velocity[2], km / sec) << std::endl;
 }
 
-void Trajectory::Print_Summary(int mpi_rank) const
+std::string Trajectory::Summary() const
 {
-	if(mpi_rank == 0)
-	{
-		std::cout << "\nTrajectory summary:" << std::endl
-				  << std::endl
-				  << "\tInitial speed [km/s]:\t" << In_Units(events[0].Speed(), km / sec) << std::endl
-				  << "\tFinal speed [km/s]:\t" << In_Units(events.back().Speed(), km / sec) << std::endl
-				  << "\tNumber of scatterings:\t" << Number_of_Scatterings() << std::endl
-				  << "\tDeepest depth [km]:\t" << In_Units(Deepest_Depth(), km) << std::endl
-				  << SEPARATOR;
-	}
+	std::stringstream ss;
+	ss << "\nTrajectory summary:" << std::endl
+	   << std::endl
+	   << "\tInitial speed [km/s]:\t" << In_Units(events[0].Speed(), km / sec) << std::endl
+	   << "\tFinal speed [km/s]:\t" << In_Units(events.back().Speed(), km / sec) << std::endl
+	   << "\tNumber of scatterings:\t" << Number_of_Scatterings() << std::endl
+	   << "\tDeepest depth [km]:\t" << In_Units(Deepest_Depth(), km) << std::endl
+	   << SEPARATOR;
+	return ss.str();
 }
 
 void Scatter(Event& current_event, obscura::DM_Particle& DM, const obscura::Isotope& target, std::mt19937& PRNG)

@@ -2,6 +2,7 @@
 #define __Data_Generation_hpp_
 
 #include <random>
+#include <string>
 
 // Headers from libphysica
 #include "Natural_Units.hpp"
@@ -54,7 +55,7 @@ class Simulation_Data
 	double Lowest_Speed(unsigned int iso_ring = 0) const;
 	double Highest_Speed(unsigned int iso_ring = 0) const;
 
-	void Print_Summary(unsigned int mpi_rank = 0);
+	std::string Summary();
 };
 }	// namespace DaMaSCUS
 

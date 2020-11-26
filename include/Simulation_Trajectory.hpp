@@ -1,6 +1,7 @@
 #ifndef __Simulation_Trajectory_hpp_
 #define __Simulation_Trajectory_hpp_
 
+#include <string>
 #include <vector>
 
 // Headers from libphysica
@@ -32,7 +33,7 @@ class Trajectory
 	std::vector<Event> Points_of_Depth_Crossing(double underground_depth) const;
 
 	void Save_to_File(std::string& file_path) const;
-	void Print_Summary(int mpi_rank = 0) const;
+	std::string Summary() const;
 };
 
 // 2. Simulator

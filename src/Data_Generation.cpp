@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <chrono>
 #include <mpi.h>
+#include <sstream>
 
 // Headers from libphysica
 #include "Utilities.hpp"
@@ -163,52 +164,54 @@ double Simulation_Data::Highest_Speed(unsigned int iso_ring) const
 	return (*std::max_element(data[iso_ring].begin(), data[iso_ring].end())).value;
 }
 
-void Simulation_Data::Print_Summary(unsigned int mpi_rank)
+std::string Simulation_Data::Summary()
 {
-	if(mpi_rank == 0)
+	std::stringstream ss;
+
+	unsigned long int number_of_data_points_tot = std::accumulate(number_of_data_points.begin(), number_of_data_points.end(), 0);
+	ss << SEPARATOR
+	   << "Simulation data summary" << std::endl
+	   << std::endl
+	   << "\tConfiguration:" << std::endl
+	   << "\tDM speed threshold [km/sec]:\t" << libphysica::Round(In_Units(minimum_speed_threshold, km / sec)) << std::endl
+	   << "\tMinimum sample size:\t\t" << min_sample_size_above_threshold << std::endl
+	   << "\tIsodetection rings:\t\t" << isodetection_rings << std::endl
+	   << std::endl
+	   << "\tResults:" << std::endl
+	   << "\tSimulated trajectories:\t\t" << number_of_trajectories << std::endl
+	   << "\tGenerated data points (total):\t" << number_of_data_points_tot << std::endl
+	   << "\tData points per trajectory:\t" << 1.0 * number_of_data_points_tot / number_of_trajectories << std::endl
+	   << "\tAverage # of scatterings:\t" << libphysica::Round(average_number_of_scatterings) << std::endl
+	   << "\tFree particles [%]:\t\t" << libphysica::Round(100.0 * Free_Ratio()) << std::endl;
+
+	if(isodetection_rings > 1)
 	{
-		unsigned long int number_of_data_points_tot = std::accumulate(number_of_data_points.begin(), number_of_data_points.end(), 0);
-		std::cout << SEPARATOR
-				  << "Simulation data summary" << std::endl
-				  << std::endl
-				  << "Configuration:" << std::endl
-				  << "DM speed threshold [km/sec]:\t" << libphysica::Round(In_Units(minimum_speed_threshold, km / sec)) << std::endl
-				  << "Minimum sample size:\t\t" << min_sample_size_above_threshold << std::endl
-				  << "Isodetection rings:\t\t" << isodetection_rings << std::endl
-				  << std::endl
-				  << "Results:" << std::endl
-				  << "Simulated trajectories:\t\t" << number_of_trajectories << std::endl
-				  << "Generated data points (total):\t" << number_of_data_points_tot << std::endl
-				  << "Data points per trajectory:\t" << 1.0 * number_of_data_points_tot / number_of_trajectories << std::endl
-				  << "Average # of scatterings:\t" << libphysica::Round(average_number_of_scatterings) << std::endl
-				  << "Free particles [%]:\t\t" << libphysica::Round(100.0 * Free_Ratio()) << std::endl;
-
-		if(isodetection_rings > 1)
+		ss << std::endl
+		   << "\tRing\tData points\t<u> [km/sec]\tu_max [km/sec]" << std::endl;
+		for(unsigned int i = 0; i < isodetection_rings; i++)
 		{
-			std::cout << std::endl
-					  << "Ring\tData points\tRelative [%]\t<u> [km/sec]\tu_max [km/sec]" << std::endl;
-			for(unsigned int i = 0; i < isodetection_rings; i++)
-			{
-				double rel_number_of_data_points = 100.0 * number_of_data_points[i] / number_of_data_points_tot;
-				std::vector<double> u_average	 = libphysica::Weighted_Average(data[i]);
-				double u_max					 = Highest_Speed(i);
-				std::cout << i + 1 << "\t" << number_of_data_points[i] << "\t\t" << libphysica::Round(rel_number_of_data_points) << "\t\t" << libphysica::Round(In_Units(u_average[0], km / sec)) << " +- " << libphysica::Round(In_Units(u_average[1], km / sec)) << "\t" << libphysica::Round(In_Units(u_max, km / sec)) << std::endl;
-			}
+			double rel_number_of_data_points = 100.0 * number_of_data_points[i] / number_of_data_points_tot;
+			std::vector<double> u_average	 = libphysica::Weighted_Average(data[i]);
+			double u_max					 = Highest_Speed(i);
+			ss << "\t" << i + 1 << "\t" << number_of_data_points[i] << " (" << libphysica::Round(rel_number_of_data_points) << "%)"
+			   << "\t" << libphysica::Round(In_Units(u_average[0], km / sec)) << " +- " << libphysica::Round(In_Units(u_average[1], km / sec)) << "\t" << libphysica::Round(In_Units(u_max, km / sec)) << std::endl;
 		}
-		else
-		{
-			std::vector<double> u_average = libphysica::Weighted_Average(data[0]);
-			double u_max				  = Highest_Speed();
-			std::cout << "<u> [km/sec]:\t\t\t" << libphysica::Round(In_Units(u_average[0], km / sec)) << " +- " << libphysica::Round(In_Units(u_average[1], km / sec)) << std::endl
-					  << "u_max [km/sec]:\t\t\t" << libphysica::Round(In_Units(u_max, km / sec)) << std::endl;
-		}
-		std::cout << std::endl
-				  << "Trajectory rate [1/s]:\t\t" << libphysica::Round(1.0 * number_of_trajectories / computing_time) << std::endl
-				  << "Data generation rate [1/s]:\t" << libphysica::Round(1.0 * number_of_data_points_tot / computing_time) << std::endl
-				  << "Simulation time:\t\t" << libphysica::Time_Display(computing_time) << std::endl;
-
-		std::cout << SEPARATOR << std::endl;
 	}
+	else
+	{
+		std::vector<double> u_average = libphysica::Weighted_Average(data[0]);
+		double u_max				  = Highest_Speed();
+		ss << "\t<u> [km/sec]:\t\t\t" << libphysica::Round(In_Units(u_average[0], km / sec)) << " +- " << libphysica::Round(In_Units(u_average[1], km / sec)) << std::endl
+		   << "\tu_max [km/sec]:\t\t\t" << libphysica::Round(In_Units(u_max, km / sec)) << std::endl;
+	}
+	ss << std::endl
+	   << "\tTrajectory rate [1/s]:\t\t" << libphysica::Round(1.0 * number_of_trajectories / computing_time) << std::endl
+	   << "\tData generation rate [1/s]:\t" << libphysica::Round(1.0 * number_of_data_points_tot / computing_time) << std::endl
+	   << "\tSimulation time:\t\t" << libphysica::Time_Display(computing_time) << std::endl;
+
+	ss << SEPARATOR << std::endl;
+
+	return ss.str();
 }
 
 }	// namespace DaMaSCUS
