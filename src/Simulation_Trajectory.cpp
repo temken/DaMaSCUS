@@ -142,7 +142,7 @@ Trajectory Simulate_Trajectory(Event initial_conditions, Earth_Model& earth_mode
 		double v	   = current_event.Speed();
 		double xv	   = current_event.position * current_event.velocity;
 		double t_entry = (-xv - sqrt(rEarth * rEarth * v * v - v * v * r * r + xv * xv)) / v / v;
-		current_event.Propagate(t_entry + micro * meter / v);
+		current_event.Propagate(t_entry + cm / v);
 	}
 
 	// 2. Underground propagation
