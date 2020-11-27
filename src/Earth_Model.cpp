@@ -90,7 +90,7 @@ double Earth_Model::Time_of_Layer_Exit(const Event& current_event) const
 	if(current_layer > 0)
 	{
 		double time_of_min_radial_distance = -1.0 * xv / v / v;
-		double min_radial_distance		   = x * x - xv * xv / v / v;
+		double min_radial_distance		   = sqrt(x * x - xv * xv / v / v);
 		if(time_of_min_radial_distance > 0 && min_radial_distance < layer_transitions[current_layer - 1])
 		{
 			R_next			= layer_transitions[current_layer - 1];
