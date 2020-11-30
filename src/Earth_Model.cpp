@@ -39,7 +39,7 @@ Earth_Model::Earth_Model(obscura::DM_Particle& DM, double vMax)
 	target_isotopes	   = {{}, {}, {}};
 	isotope_abundances = {{}, {}, {}};
 	for(unsigned int i = 0; i < Z_lists.size(); i++)
-		for(unsigned int j = 0; j < element_abundances.size(); j++)
+		for(unsigned int j = 0; j < element_abundances[i].size(); j++)
 		{
 			obscura::Element element = obscura::Get_Element(Z_lists[i][j]);
 			for(auto& isotope : element.isotopes)
@@ -117,12 +117,12 @@ void Earth_Model::Interpolate_Mean_Free_Path(obscura::DM_Particle& DM, double vM
 	std::vector<double> speeds = libphysica::Linear_Space(0.0, vMax, 200);
 	mfp_prefactors.clear();
 
+	std::vector<double> radii = {km, 2000.0 * km, 6370 * km};
 	for(unsigned int i = 0; i < target_isotopes.size(); i++)
 	{
 		std::vector<double> prefactors;
-		double r = 0.5 * rEarth;   //cancels
 		for(auto& v : speeds)
-			prefactors.push_back(1.0 / Mean_Free_Path(DM, r, v) / Mass_Density(r));
+			prefactors.push_back(1.0 / Mean_Free_Path(DM, radii[i], v) / Mass_Density(radii[i]));
 		mfp_prefactors.push_back(libphysica::Interpolation(speeds, prefactors));
 	}
 }
