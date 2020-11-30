@@ -13,6 +13,7 @@ namespace DaMaSCUS
 Underground_Distribution::Underground_Distribution(const Simulation_Data& simulation_data, const Simulation_Data& reference_data, unsigned int isodetection_ring, double halo_density)
 : DM_Distribution("Underground distribution" + std::to_string(isodetection_ring), 0.0, simulation_data.Lowest_Speed(isodetection_ring), 1.05 * simulation_data.Highest_Speed(isodetection_ring))
 {
+	DD_use_eta_function						= true;
 	speed_pdf								= libphysica::Perform_KDE(simulation_data.data[isodetection_ring], v_domain[0], v_domain[1]);
 	DM_density								= simulation_data.Average_Weight(isodetection_ring) / reference_data.Average_Weight(isodetection_ring) * halo_density;
 	std::function<double(double)> integrand = [this](double v) {

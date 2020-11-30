@@ -61,14 +61,15 @@ int main(int argc, char* argv[])
 	Earth_Model earth_model(*cfg.DM, cfg.DM_distr->Maximum_DM_Speed());
 	////////////////////////////////////////////////////////////////////////
 
-	unsigned int number_of_isodetection_rings = 30;
+	unsigned int number_of_isodetection_rings = 2;
 	double underground_depth				  = 1.4 * km;
-	unsigned int sample_size				  = 1000;
+	unsigned int sample_size_initial		  = 100000;
+	unsigned int sample_size				  = 100000;
 	double v_min							  = 0.0;
 
 	obscura::DM_Particle_SI reference_DM(cfg.DM->mass, 1.0e-80 * cm * cm);
 	earth_model.Interpolate_Mean_Free_Path(reference_DM, cfg.DM_distr->Maximum_DM_Speed());
-	Simulation_Data reference_data(sample_size, underground_depth, v_min, number_of_isodetection_rings);
+	Simulation_Data reference_data(sample_size_initial, underground_depth, v_min, number_of_isodetection_rings);
 	reference_data.Generate_Data(reference_DM, earth_model, *cfg.DM_distr);
 	if(mpi_rank == 0)
 		log << reference_data.Summary() << std::endl;
@@ -79,9 +80,19 @@ int main(int argc, char* argv[])
 	if(mpi_rank == 0)
 		log << simulation_data.Summary() << std::endl;
 
-	unsigned int iso_ring = 0;
-	Underground_Distribution distr(simulation_data, reference_data, iso_ring, cfg.DM_distr->DM_density);
-	std::cout << distr.DM_density * cm * cm * cm << std::endl;
+	for(unsigned int iso_ring = 0; iso_ring < number_of_isodetection_rings; iso_ring++)
+	{
+		Underground_Distribution distr(simulation_data, reference_data, iso_ring, cfg.DM_distr->DM_density);
+		if(mpi_rank == 0)
+			std::cout << iso_ring << "\t" << distr.DM_density * cm * cm * cm << std::endl;
+	}
+
+	// // Event ic = Initial_Conditions(*cfg.DM_distr, 2 * rEarth, PRNG);
+	// Event ic(0.0, libphysica::Vector({1.0 * km, 2 * rEarth, 0.0}), libphysica::Vector({0.0, -100.0 * km / sec, 0.0}));
+	// // std::cout << ic.Point_of_Minimum_Distance().time / sec << std::endl;
+	// Trajectory traj = Simulate_Trajectory(ic, earth_model, reference_DM, PRNG);
+	// std::cout << traj.events.size() << std::endl;
+	// std::cout << traj.events[0].Point_of_Minimum_Distance().Radius() / km << std::endl;
 	////////////////////////////////////////////////////////////////////////
 	//Final terminal output
 	MPI_Barrier(MPI_COMM_WORLD);

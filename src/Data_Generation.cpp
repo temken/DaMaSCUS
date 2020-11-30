@@ -192,11 +192,12 @@ std::string Simulation_Data::Summary()
 	   << "\tDM speed threshold [km/sec]:\t" << libphysica::Round(In_Units(minimum_speed_threshold, km / sec)) << std::endl
 	   << "\tMinimum sample size:\t\t" << min_sample_size_above_threshold << std::endl
 	   << "\tIsodetection rings:\t\t" << isodetection_rings << std::endl
+	   << "\tUnderground depth [km]:\t\t" << In_Units(underground_depth, km) << std::endl
 	   << std::endl
 	   << "\tResults:" << std::endl
 	   << "\tSimulated trajectories:\t\t" << number_of_trajectories << std::endl
 	   << "\tGenerated data points (total):\t" << number_of_data_points_tot << std::endl
-	   << "\tData points per trajectory:\t" << 1.0 * number_of_data_points_tot / number_of_trajectories << std::endl
+	   << "\tData points per trajectory:\t" << 1.0 * number_of_data_points_tot / number_of_trajectories << " (" << 2.0 * pow((rEarth - underground_depth) / rEarth, 2.0) << ")" << std::endl
 	   << "\tAverage # of scatterings:\t" << libphysica::Round(average_number_of_scatterings) << std::endl
 	   << "\tFree particles [%]:\t\t" << libphysica::Round(100.0 * Free_Ratio()) << std::endl
 	   << "\tStuck particles [%]:\t\t" << libphysica::Round(100.0 * Stuck_Ratio()) << std::endl;
