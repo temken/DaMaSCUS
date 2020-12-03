@@ -111,10 +111,7 @@ void Scatter(Event& current_event, obscura::DM_Particle& DM, const obscura::Isot
 	libphysica::Vector vel_normalized = vel_initial.Normalized();
 	double v_initial				  = vel_initial.Norm();
 
-	//Find cos alpha
-	// double cosalpha = DM.Sample_Scattering_Angle(xi, target, vDM, IS_Angle);
-	double cosalpha = 2.0 * libphysica::Sample_Uniform(PRNG, 0.0, 1.0) - 1.0;
-
+	double cosalpha = DM.Sample_Scattering_Angle_Nucleus(target, v_initial, PRNG);
 	//Construction of n, the unit vector pointing into the direction of vfinal.
 	double cosphi	= cos(libphysica::Sample_Uniform(PRNG, 0.0, 2.0 * M_PI));
 	double sinphi	= sqrt(1.0 - cosphi * cosphi);
