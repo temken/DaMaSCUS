@@ -93,7 +93,8 @@ int main(int argc, char *argv[])
 		//Simulation of trajectories without scatterings and without formfactor implementation
 			for(unsigned int i=0;i<Local_SampleSize_Initial;i++)
 			{
-				Trajectory trajectory=ParticleTrack(mChi,sigmaInitial,InitialCondition(0,vEarth,PRNG),vcut,PRNG);
+				Event IC = InitialCondition(0,vEarth,PRNG);
+				Trajectory trajectory=ParticleTrack(mChi,sigmaInitial,IC,vcut,PRNG);
 				std::vector<Event> CrossingEvents=trajectory.DepthCrossing(Detector_Depth);
 				Local_Counter_Crossings0+=CrossingEvents.size();
 				//Increment the isodetection counters and record the weighted velocity norm.
@@ -102,7 +103,8 @@ int main(int argc, char *argv[])
 					int IsoRing=CrossingEvents[j].IsodetectionRing(Isodetection_Rings);
 					Local_N0[IsoRing]++;
 					
-					double weight = CrossingEvents[j].DataWeight();
+					double speed_ratio = IC.NormVelocity() / CrossingEvents[j].NormVelocity();
+					double weight = CrossingEvents[j].DataWeight(speed_ratio);
 					Local_W0[IsoRing]+=weight;
 					Local_W0sq[IsoRing]+=weight*weight;
 				}
@@ -202,7 +204,8 @@ int main(int argc, char *argv[])
  		   	while(Local_Counter_DatapointsTotal<Isodetection_Rings*Local_SampleSize_Velocity)
  		   	{
  		   		//Simulate track.
- 		   			Trajectory trajectory=ParticleTrack(mChi,sigma0,InitialCondition(0,vEarth,PRNG),vcut,PRNG); 		   		
+					Event IC = InitialCondition(0,vEarth,PRNG);
+ 		   			Trajectory trajectory=ParticleTrack(mChi,sigma0,IC,vcut,PRNG); 		   		
  		   		//Increase counter of tracks and scatterings and vcutoff reachers 
  		   			Local_Counter_Tracks++;
  		   			int scatterings = trajectory.NoOfScatterings();
@@ -217,7 +220,8 @@ int main(int argc, char *argv[])
 						//Which ring?
 							int IsoRing=CrossingEvents[j].IsodetectionRing(Isodetection_Rings);
 						//Increase the weight sums
-							double weight =CrossingEvents[j].DataWeight() ;
+							double speed_ratio = IC.NormVelocity() / CrossingEvents[j].NormVelocity();
+							double weight = CrossingEvents[j].DataWeight(speed_ratio);
 							Local_W[IsoRing]+=weight;
 							Local_Wsq[IsoRing]+=weight*weight;
 						//Increase the particle counter.
@@ -251,7 +255,7 @@ int main(int argc, char *argv[])
   	  	//Calculate DM Densities
   	  		vector<vector<double>> Edensity=DM_EnergyDensity(Global_W0,Global_SampleSize_Initial,Global_W,Global_Counter_Tracks,Global_W0sq,Global_Wsq,Isodetection_Rings);
   	  		vector<vector<double>> Ndensity=DM_NumberDensity(mChi,Edensity);
-			double averageNdensity=DM_AverageDensity(Ndensity,Isodetection_Rings);
+			double averageNdensity=DM_AverageDensity(Ndensity,Isodetection_Rings,Detector_Depth);
  	   	//Status update and save N(theta) and rho(theta)
  	   		if(myRank==0)
 			{	  					

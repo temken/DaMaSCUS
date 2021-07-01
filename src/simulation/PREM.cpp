@@ -269,7 +269,7 @@
 		if(abs(cosalpha+1) > epsilon)
 		{
 			C2 = rEarth/2*(Ltilde*(L+r0*cosalpha)-r0*r0*cosalpha+(1-cosalpha*cosalpha)*r0*r0*log((L+Ltilde+r0*cosalpha)/((1+cosalpha)*r0)));
-			C4 = 1/8/rEarth*((5-3*cosalpha*cosalpha)*(cosalpha*pow(r0,3)*Ltilde-pow(r0,4)*cosalpha)+2*L*L*Ltilde*(L+3*r0*cosalpha)+L*Ltilde*r0*r0*(5+cosalpha*cosalpha)+3*pow(r0,4)*pow(1-cosalpha*cosalpha,2)*log((L+Ltilde+r0*cosalpha)/((1+cosalpha)*r0)));
+			C4 = 1.0/8/rEarth*((5-3*cosalpha*cosalpha)*(cosalpha*pow(r0,3)*Ltilde-pow(r0,4)*cosalpha)+2*L*L*Ltilde*(L+3*r0*cosalpha)+L*Ltilde*r0*r0*(5+cosalpha*cosalpha)+3*pow(r0,4)*pow(1-cosalpha*cosalpha,2)*log((L+Ltilde+r0*cosalpha)/((1+cosalpha)*r0)));
 		}
 		else
 		{

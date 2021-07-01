@@ -69,10 +69,10 @@
 			return 1.0*acos(position.normalized().dot(vEarth.normalized()))/M_PI*isodetection_rings;
 		}
 	//Returns the weight of a velocity data point. Should only be used for events returned by Trajectory::DepthCrossing
-		double Event::DataWeight()
+		double Event::DataWeight(double speed_ratio)
 		{
 			//1/cos gamma, where gamma is the angle between the velocity and the normal vector of the isoring, where the particle crossed the isoring
-			return 1.0/abs(position.normalized().dot(velocity.normalized()));
+			return speed_ratio / abs(position.normalized().dot(velocity.normalized()));
 		}
 	//Overload <<
 		std::ostream& operator<<(std::ostream &output,const Event &event){
