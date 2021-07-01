@@ -13,8 +13,9 @@
 *.CRESST-II
 data/*
 
-#Ignore executables
+#Ignore executables and results
 bin/*
+results/*
 
 # Ignore build files
 *.o

@@ -322,12 +322,13 @@ using namespace libconfig;
 
 	extern std::vector< std::vector<double>> DM_NumberDensity(double mDM,std::vector<std::vector<double>> density)
 	{
+		std::vector< std::vector<double>> number_density(density.size(), {0.0,0.0});
 		for(unsigned int i=0;i<density.size();i++)
 		{
-			density[i][0]/=mDM;
-			density[i][1]/=mDM;
+			number_density[i][0] = density[i][0] /mDM;
+			number_density[i][1] = density[i][1] / mDM;
 		}
-		return density;
+		return number_density;
 	}
 
 
@@ -336,9 +337,10 @@ using namespace libconfig;
 		double DM_AverageDensity(std::vector<std::vector<double>> density,int rings,double depth)
 		{
 			double TotalArea=4*M_PI*pow(rEarth-depth,2);
+			double d_theta = 180.0 / rings;
 			double sum=0.0;
 			for(int i=0;i<rings;i++) 
-				sum+= density[i][0]*IsoDetectionRing_Area(i,rings,depth)/TotalArea;
+				sum+= density[i][0]*IsoDetectionRing_Area(i * d_theta,rings,depth)/TotalArea;
 			return sum;
 		}
 
