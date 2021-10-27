@@ -16,15 +16,16 @@ const double TeV = 1.0E3 * GeV;
 const double gram = 5.617977528089887E23 * GeV;
 const double kg	  = 1E3 * gram;
 // Length
-const double cm		= 5.067E13 / GeV;
-const double mm		= 0.1 * cm;
-const double meter	= 100 * cm;
-const double km		= 1000 * meter;
-const double fm		= 1E-15 * meter;
-const double pb		= 1E-36 * pow(cm, 2);
-const double parsec = 3.0857E16 * meter;
-const double kpc	= 1E3 * parsec;
-const double Mpc	= 1E6 * parsec;
+const double cm			 = 5.067E13 / GeV;
+const double mm			 = 0.1 * cm;
+const double meter		 = 100 * cm;
+const double km			 = 1000 * meter;
+const double fm			 = 1E-15 * meter;
+const double pb			 = 1E-36 * pow(cm, 2);
+const double parsec		 = 3.0857E16 * meter;
+const double kpc		 = 1E3 * parsec;
+const double Mpc		 = 1E6 * parsec;
+const double Bohr_Radius = 5.291772083e-11 * meter;
 // Time
 const double sec	= 299792458 * meter;
 const double minute = 60 * sec;
@@ -115,6 +116,15 @@ double TotalsigmaSI(double mX, double sigman0, double A, double vX)
 		if(ff == 0.0)
 			cout << "Error in TotalsigmaSI. ff=0" << endl;
 	}
+	else if(FormFactor == "ChargeScreening" || FormFactor == "LightMediator")
+	{
+		int Z			= A / 2.0;
+		double a		= Thomas_Fermi_Radius(Z);
+		double mNucleus = NucleusMass(A);
+		double q2max	= 4.0 * std::pow(Mu(mX, mNucleus), 2.0) * vX * vX;
+		double x		= a * a * q2max;
+		ff				= (FormFactor == "ChargeScreening") ? 1.0 + 1.0 / (1.0 + x) - 2.0 / x * log(1.0 + x) : x * x / (1.0 + x);
+	}
 	return sigmaSI(mX, sigman0, A) * ff;
 }
 
@@ -131,6 +141,11 @@ double FF_HelmApproximation_Integrated(double mX, double vDM, double A)
 	double qMax2 = 4.0 * pow(Mu(mX, mA) * vDM, 2.0);
 	double RA2	 = pow((0.3 + 0.9 * pow(mA / GeV, 1.0 / 3.0)) * fm, 2.0);
 	return 3.0 / RA2 * (1 - exp(-qMax2 * RA2 / 3.0));
+}
+
+double Thomas_Fermi_Radius(int Z)
+{
+	return 0.25 * std::pow(9.0 * M_PI * M_PI / 2.0 / Z, 1.0 / 3.0) * Bohr_Radius;
 }
 
 // Coordinate Systems

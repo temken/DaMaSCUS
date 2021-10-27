@@ -12,7 +12,7 @@ extern const double GeV, eV, keV, MeV, TeV;
 // Mass
 extern const double gram, kg;
 // Length
-extern const double cm, mm, meter, km, fm, pb, parsec, kpc, Mpc;
+extern const double cm, mm, meter, km, fm, pb, parsec, kpc, Mpc, Bohr_Radius;
 // Time
 extern const double sec, minute, hour, day, year;
 // Temperature
@@ -52,6 +52,9 @@ extern double TotalsigmaSI(double mX, double sigman0, double A, double vX = 0.0)
 // Helm Form Factor (approximation)
 extern double FF_HelmApproximation(double qSquared, double A);
 extern double FF_HelmApproximation_Integrated(double mX, double vDM, double A);
+
+// Charge screening
+extern double Thomas_Fermi_Radius(int Z);
 
 // Coordinate System Change
 extern Eigen::Vector3d SphericalCoordinates(double r, double theta, double phi);
