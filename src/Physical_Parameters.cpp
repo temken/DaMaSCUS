@@ -91,7 +91,8 @@
 
 	//cross section for wimp nucleus scattering with zero momentum transfer
 	double sigmaSI(double mX,double sigman0,double A){
-		return sigman0*pow(Mu(mX,NucleusMass(A)),2)/pow(Mu(mX,mNucleon),2)*pow(A,2);
+		double Z = A / 2.0;
+		return sigman0*pow(Mu(mX,NucleusMass(A)),2)/pow(Mu(mX,mNucleon),2)*pow(Z,2);
 	}
 
 	double TotalsigmaSI(double mX,double sigman0,double A,double vX)
