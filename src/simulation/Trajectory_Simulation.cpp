@@ -10,25 +10,20 @@
 #include "RN_Generators.hpp"
 
 // This function calculates the final velocity of a DM particle of mass mX after it scattered on a nucleus A with initial velocity vini.
-Eigen::Vector3d Scatter(Eigen::Vector3d& vini, double mX, double A, std::mt19937& PRNG)
+
+double Sample_Scattering_Angle(double mDM, double mNucleus, Eigen::Vector3d& vini, std::string form_factor, std::mt19937& PRNG)
 {
-	Eigen::Vector3d vfinal;
-	double mNucleus = NucleusMass(A);
-	if(FormFactor == "HelmApproximation")
+	double cos_chi = 0.0;
+	if(form_factor == "None")
+		cos_chi = 2.0 * ProbabilitySample(PRNG) - 1.0;
+	else if(form_factor == "HelmApproximation")
 	{
-		// Unit Vector in direction of velocity
-		Eigen::Vector3d ev = vini.normalized();
-		// Determination of n, the unit vector pointing into the direction of vfinal, see Landau Lifshitz.
-		Eigen::Vector3d ep(ev(2), ev(2), -(ev(0) + ev(1)));
-		ep.normalize();
-		// scattering angle is not uniform anymore and depends on the velocity via the form factor
-		// double chi = ThetaSample(PRNG);
-		long double qmax2 = 4.0 * Mu(mX, mNucleus) * Mu(mX, mNucleus) * vini.dot(vini);
+		double xi	 = ProbabilitySample(PRNG);
+		double rA2	 = pow((0.3 + 0.9 * pow(mNucleus / GeV, 1.0 / 3.0)) * fm, 2.0);
+		double qmax2 = 4.0 * Mu(mDM, mNucleus) * Mu(mDM, mNucleus) * vini.dot(vini);
 		if(qmax2 == 0.0)
 			cout << "Error in Scatter with HelmApproximation. (qmax2==0)" << endl;
-		double xi		= ProbabilitySample(PRNG);
-		long double rA2 = pow((0.3 + 0.9 * pow(mNucleus / GeV, 1.0 / 3.0)) * fm, 2.0);
-		long double q2;
+		double q2;
 		// If the argument of the exp becomes too small exp() returns just 1. and no random angle is coming out. In this case we use a taylor expanded result
 		if(rA2 * qmax2 > 1.0e-10)
 			q2 = -3.0 / rA2 * log(1.0 - xi * (1.0 - exp(-1.0 / 3.0 * rA2 * qmax2)));
@@ -36,34 +31,42 @@ Eigen::Vector3d Scatter(Eigen::Vector3d& vini, double mX, double A, std::mt19937
 			q2 = xi * qmax2;
 		if(q2 == 0.0)
 			cout << "Error in Scatter with HelmApproximation. (q2==0)" << endl;
-
-		double chi = acos(1.0 - 2.0 * q2 / qmax2);
-
-		// construct vector mit scattering angle chi
-		Eigen::Vector3d n;
-		if(chi < M_PI / 2)
-		{
-			n = ev + tan(chi) * ep;
-		}
-		else
-		{
-			n = -ev - tan(chi) * ep;
-		}
-		n.normalize();
-		// We chose a particular ep, therefore we finally rotate n around ev by a random angle.
-		double alpha = PhiSample(PRNG);
-		n			 = (n.dot(ev)) * ev + cos(alpha) * (ev.cross(n)).cross(ev) + sin(alpha) * ev.cross(n);
-		// Output
-		vfinal = mNucleus / (mX + mNucleus) * vini.norm() * n + mX / (mX + mNucleus) * vini;
+		cos_chi = 1.0 - 2.0 * q2 / qmax2;
+	}
+	else if(form_factor == "ChargeScreening")
+	{
+	}
+	else if(form_factor == "LightMediator")
+	{
 	}
 	else
 	{
-		// Unit vector with uniformly distributed random direction:
-		Eigen::Vector3d n = SphericalCoordinates(1, ThetaSample(PRNG), PhiSample(PRNG));
-		// Output
-		vfinal = mNucleus / (mX + mNucleus) * vini.norm() * n + mX / (mX + mNucleus) * vini;
+		cout << "Error in Sample_Scattering_Angle(): Form factor " << form_factor << " not recognized." << endl;
+		std::exit(EXIT_FAILURE);
 	}
+	std::cout << "Scattering angle: " << cos_chi << std::endl;
+	return cos_chi;
+}
 
+Eigen::Vector3d Scatter(Eigen::Vector3d& vini, double mX, double A, std::mt19937& PRNG)
+{
+	double mNucleus = NucleusMass(A);
+
+	double cos_scattering_angle = Sample_Scattering_Angle(mX, mNucleus, vini, FormFactor, PRNG);
+
+	// Construction of n, the unit vector pointing into the direction of vfinal.
+	double sin_scattering_angle = sqrt(1.0 - cos_scattering_angle * cos_scattering_angle);
+	double phi					= PhiSample(PRNG);
+	double cos_phi				= cos(phi);
+	double sin_phi				= sin(phi);
+
+	Eigen::Vector3d ev = vini.normalized();
+	double aux		   = sqrt(1.0 - pow(ev[2], 2.0));
+	Eigen::Vector3d n({cos_scattering_angle * ev[0] + sin_scattering_angle / aux * (ev[0] * ev[2] * cos_phi - ev[1] * sin_phi),
+					   cos_scattering_angle * ev[1] + sin_scattering_angle / aux * (ev[1] * ev[2] * cos_phi + ev[0] * sin_phi),
+					   cos_scattering_angle * ev[2] - aux * cos_phi * sin_scattering_angle});
+
+	Eigen::Vector3d vfinal = mNucleus / (mX + mNucleus) * vini.norm() * n + mX / (mX + mNucleus) * vini;
 	return vfinal;
 }
 

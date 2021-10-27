@@ -127,7 +127,7 @@ void Initialize_PREM(double mX, double sigma0)
 
 void Update_PREM(double mX, double sigma0, double velocity)
 {
-	if(FormFactor == "HelmApproximation")
+	if(FormFactor != "None")
 	{
 		g_PREM[0] = 0.0;
 		g_PREM[1] = 0.0;
@@ -167,10 +167,6 @@ void Update_PREM(double mX, double sigma0, double velocity)
 		{
 			Scatter_Probability_Mantle[i][2] /= total;
 		}
-	}
-	else
-	{
-		cout << "Error in Update_PREM." << endl;
 	}
 }
 
