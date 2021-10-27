@@ -154,7 +154,7 @@ void Update_PREM(double mX, double sigma0, double velocity)
 		for(int i = 0; i < 9; i++)
 		{
 			Scatter_Probability_Core[i][2] /= total;
-			// cout <<"Core \t" <<Scatter_Probability_Core[i][0] <<"\t"<<Scatter_Probability_Core[i][1]<<"\t"<<Scatter_Probability_Core[i][2] <<endl;
+			// cout << "Core \t" << Scatter_Probability_Core[i][0] << "\t" << Scatter_Probability_Core[i][1] << "\t" << Scatter_Probability_Core[i][2] << endl;
 		}
 		// mantle
 		total = 0.0;
@@ -368,6 +368,7 @@ int ScatterNucleus(Eigen::Vector3d& position, std::mt19937& PRNG)
 			}
 		}
 	}
-	// Space
+	std::cout << "Error in ScatterNucleus(): No target could be sampled." << std::endl;
+	std::exit(EXIT_FAILURE);
 	return 0;
 }

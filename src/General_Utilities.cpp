@@ -83,7 +83,7 @@ void Read_Config_File(const char* inputfile)
 		cerr << "No 'formfactor' setting in configuration file." << endl;
 		exit(EXIT_FAILURE);
 	}
-	if(FormFactor != "None" && FormFactor != "HelmApproximation")
+	if(FormFactor != "None" && FormFactor != "HelmApproximation" && FormFactor != "ChargeScreening" && FormFactor != "LightMediator")
 	{
 		cerr << "Form factor option \"" << FormFactor << "\" is not a valid option." << endl;
 		exit(EXIT_FAILURE);

@@ -11,10 +11,6 @@
 
 // This function calculates the final velocity of a DM particle of mass mX after it scattered on a nucleus A with initial velocity vini.
 
-double CDF_Scattering_Angle(double cos_chi, std::string form_factor)
-{
-}
-
 double Sample_Scattering_Angle(double mDM, double A, Eigen::Vector3d& vini, std::string form_factor, std::mt19937& PRNG)
 {
 	double cos_chi	= 0.0;
@@ -40,19 +36,19 @@ double Sample_Scattering_Angle(double mDM, double A, Eigen::Vector3d& vini, std:
 	}
 	else if(form_factor == "ChargeScreening")
 	{
-		int Z							  = A / 2.0;
+		int Z							  = (A == 1) ? 1 : A / 2.0;
 		double a						  = Thomas_Fermi_Radius(Z);
 		double q2max					  = 4.0 * std::pow(Mu(mDM, mNucleus), 2.0) * vini.dot(vini);
 		double x						  = a * a * q2max;
-		double Xi						  = ProbabilitySample(PRNG);
-		std::function<double(double)> cdf = [Xi, x](double cosa) {
-			return Xi - (((1.0 + x) * (x + cosa * x - 2.0 / (1.0 + x) + 4.0 / (2.0 + x - cosa * x) - 4.0 * log(2.0 * (1.0 + x)) + 4.0 * log(2.0 + x - cosa * x))) / (2.0 * (x * (2.0 + x) - 2.0 * (1.0 + x) * log(1.0 + x))));
+		double xi						  = ProbabilitySample(PRNG);
+		std::function<double(double)> cdf = [xi, x](double cosa) {
+			return xi - (((1.0 + x) * (x + cosa * x - 2.0 / (1.0 + x) + 4.0 / (2.0 + x - cosa * x) - 4.0 * log(2.0 * (1.0 + x)) + 4.0 * log(2.0 + x - cosa * x))) / (2.0 * (x * (2.0 + x) - 2.0 * (1.0 + x) * log(1.0 + x))));
 		};
 		cos_chi = Find_Root(cdf, -1.0, 1.0, 1e-4);
 	}
 	else if(form_factor == "LightMediator")
 	{
-		int Z		 = A / 2.0;
+		int Z		 = (A == 1) ? 1 : A / 2.0;
 		double a	 = Thomas_Fermi_Radius(Z);
 		double q2max = 4.0 * std::pow(Mu(mDM, mNucleus), 2.0) * vini.dot(vini);
 		double x	 = a * a * q2max;
@@ -65,7 +61,6 @@ double Sample_Scattering_Angle(double mDM, double A, Eigen::Vector3d& vini, std:
 		cout << "Error in Sample_Scattering_Angle(): Form factor " << form_factor << " not recognized." << endl;
 		std::exit(EXIT_FAILURE);
 	}
-	std::cout << "Scattering angle: " << cos_chi << std::endl;
 	return cos_chi;
 }
 

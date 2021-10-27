@@ -47,7 +47,7 @@ $(TARGETDIR)/DaMaSCUS-Analyzer: $(ANAOBJ)
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)/simulation/
 	@mkdir -p $(BUILDDIR)/analysis/
-	$(CXX) $(CXXFLAGS) $(INC) $(LIB) -o $@ -c $<
+	$(CXX) $(CXXFLAGS) $(INC) -o $@ -c $<
 
 codecov:
 	

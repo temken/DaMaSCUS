@@ -93,7 +93,7 @@ double Mu(double m1, double m2)
 // cross section for wimp nucleus scattering with zero momentum transfer
 double sigmaSI(double mX, double sigman0, double A)
 {
-	double Z = A / 2.0;
+	double Z = (A == 1) ? 1 : 0.5 * A;
 	return sigman0 * pow(Mu(mX, NucleusMass(A)), 2) / pow(Mu(mX, mNucleon), 2) * pow(Z, 2);
 }
 
@@ -118,7 +118,7 @@ double TotalsigmaSI(double mX, double sigman0, double A, double vX)
 	}
 	else if(FormFactor == "ChargeScreening" || FormFactor == "LightMediator")
 	{
-		int Z			= A / 2.0;
+		int Z			= (A == 1) ? 1 : A / 2;
 		double a		= Thomas_Fermi_Radius(Z);
 		double mNucleus = NucleusMass(A);
 		double q2max	= 4.0 * std::pow(Mu(mX, mNucleus), 2.0) * vX * vX;
