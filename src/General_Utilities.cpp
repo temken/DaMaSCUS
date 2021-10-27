@@ -378,3 +378,112 @@ std::vector<int> WorkDivision(int WorldSize, int rings)
 	}
 	return output;
 }
+
+// Root finding
+
+int Sign(double arg)
+{
+	if(arg > 0.0)
+		return 1;
+	else if(arg == 0.0)
+		return 0;
+	else
+		return -1;
+}
+
+double Sign(double x, double y)
+{
+	if(Sign(x) == Sign(y))
+		return x;
+	else
+		return -1.0 * x;
+}
+
+double Find_Root(std::function<double(double)> func, double xLeft, double xRight, double xAccuracy)
+{
+	const int Max_Iterations = 50;
+	// 1. Check if xLeft<xRight, otherwise swap.
+	if(xLeft > xRight)
+	{
+		double temp = xLeft;
+		xLeft		= xRight;
+		xRight		= temp;
+	}
+
+	// 2. Compute functions at boundary
+	double fLeft  = func(xLeft);
+	double fRight = func(xRight);
+
+	// 3. Check if xLeft and xRight bracket a root or already yield a root. Also check for NaN's.
+	if(std::isnan(fLeft) || std::isnan(fRight))
+	{
+		std::cerr << "Error in Find_Root(): Function returns nan at the brackets." << std::endl;
+		std::exit(EXIT_FAILURE);
+	}
+	else if(fLeft * fRight >= 0.0)
+	{
+		if(fLeft == 0)
+			return xLeft;
+		else if(fRight == 0)
+			return xRight;
+		else
+		{
+			std::cerr << "Error in Find_Root(): f(xLeft = " << xLeft << ") * f(xRight = " << xRight << ") = (" << fLeft << ") * (" << fRight << ") > 0.0" << std::endl;
+			std::exit(EXIT_FAILURE);
+		}
+	}
+
+	// 4. Ridder's method
+	else
+	{
+		double x1	  = xLeft;
+		double x2	  = xRight;
+		double f1	  = fLeft;
+		double f2	  = fRight;
+		double result = -9.9e99;
+		for(int i = 0; i < Max_Iterations; i++)
+		{
+			// Mid point
+			double x3 = (x1 + x2) / 2.0;
+
+			double f3 = func(x3);
+			// New point
+			double x4 = x3 + (x3 - x1) * Sign(f1 - f2) * f3 / sqrt(f3 * f3 - f1 * f2);
+			// Check if we found the root
+			if(fabs(x4 - result) < xAccuracy)
+				return x4;
+			// Prepare next iteration
+			result	  = x4;
+			double f4 = func(x4);
+			if(f4 == 0.0)
+				return result;
+			// a) x3 and x4 bracket the root
+			if(Sign(f3, f4) != f3)
+			{
+				x1 = x3;
+				f1 = f3;
+				x2 = x4;
+				f2 = f4;
+			}
+			// b) x1 and x4 bracket the root
+			else if(Sign(f1, f4) != f1)
+			{
+				x2 = x4;
+				f2 = f4;
+			}
+			// c) x2 and x4 bracket the root
+			else if(Sign(f2, f4) != f2)
+			{
+				x1 = x4;
+				f1 = f4;
+			}
+			else
+			{
+				std::cerr << "Error in Find_Root(). Ridder's method does not reach the root." << std::endl;
+				std::exit(EXIT_FAILURE);
+			}
+		}
+		std::cout << "Warning in Find_Root(): Iterations exceed the maximum. Final value f(" << result << ")=" << func(result) << std::endl;
+		return result;
+	}
+}

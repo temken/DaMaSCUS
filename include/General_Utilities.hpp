@@ -3,6 +3,7 @@
 
 #include <Eigen/Geometry>
 #include <fstream>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -43,4 +44,7 @@ extern void LogFile_Analysis(double duration, int worldsize);
 
 // Divide up the isodetection rings between the MPI processes as evenly as possible
 std::vector<int> WorkDivision(int WorldSize, int rings);
+
+extern double Find_Root(std::function<double(double)> func, double xLeft, double xRight, double epsilon);
+
 #endif

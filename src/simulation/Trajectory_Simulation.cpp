@@ -11,9 +11,14 @@
 
 // This function calculates the final velocity of a DM particle of mass mX after it scattered on a nucleus A with initial velocity vini.
 
-double Sample_Scattering_Angle(double mDM, double mNucleus, Eigen::Vector3d& vini, std::string form_factor, std::mt19937& PRNG)
+double CDF_Scattering_Angle(double cos_chi, std::string form_factor)
 {
-	double cos_chi = 0.0;
+}
+
+double Sample_Scattering_Angle(double mDM, double A, Eigen::Vector3d& vini, std::string form_factor, std::mt19937& PRNG)
+{
+	double cos_chi	= 0.0;
+	double mNucleus = NucleusMass(A);
 	if(form_factor == "None")
 		cos_chi = 2.0 * ProbabilitySample(PRNG) - 1.0;
 	else if(form_factor == "HelmApproximation")
@@ -35,9 +40,25 @@ double Sample_Scattering_Angle(double mDM, double mNucleus, Eigen::Vector3d& vin
 	}
 	else if(form_factor == "ChargeScreening")
 	{
+		int Z							  = A / 2.0;
+		double a						  = Thomas_Fermi_Radius(Z);
+		double q2max					  = 4.0 * std::pow(Mu(mDM, mNucleus), 2.0) * vini.dot(vini);
+		double x						  = a * a * q2max;
+		double Xi						  = ProbabilitySample(PRNG);
+		std::function<double(double)> cdf = [Xi, x](double cosa) {
+			return Xi - (((1.0 + x) * (x + cosa * x - 2.0 / (1.0 + x) + 4.0 / (2.0 + x - cosa * x) - 4.0 * log(2.0 * (1.0 + x)) + 4.0 * log(2.0 + x - cosa * x))) / (2.0 * (x * (2.0 + x) - 2.0 * (1.0 + x) * log(1.0 + x))));
+		};
+		cos_chi = Find_Root(cdf, -1.0, 1.0, 1e-4);
 	}
 	else if(form_factor == "LightMediator")
 	{
+		int Z		 = A / 2.0;
+		double a	 = Thomas_Fermi_Radius(Z);
+		double q2max = 4.0 * std::pow(Mu(mDM, mNucleus), 2.0) * vini.dot(vini);
+		double x	 = a * a * q2max;
+		double xi	 = ProbabilitySample(PRNG);
+
+		cos_chi = (xi * (x + 2.0) - 1.0) / (1.0 + x * xi);
 	}
 	else
 	{
@@ -52,7 +73,7 @@ Eigen::Vector3d Scatter(Eigen::Vector3d& vini, double mX, double A, std::mt19937
 {
 	double mNucleus = NucleusMass(A);
 
-	double cos_scattering_angle = Sample_Scattering_Angle(mX, mNucleus, vini, FormFactor, PRNG);
+	double cos_scattering_angle = Sample_Scattering_Angle(mX, A, vini, FormFactor, PRNG);
 
 	// Construction of n, the unit vector pointing into the direction of vfinal.
 	double sin_scattering_angle = sqrt(1.0 - cos_scattering_angle * cos_scattering_angle);
