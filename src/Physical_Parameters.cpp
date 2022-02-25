@@ -36,6 +36,7 @@ const double year	= 365 * day;
 const double Kelvin = 8.62E-14 * GeV;
 // Others
 const double erg = gram * pow(cm / sec, 2);
+const double aEM = 1.0 / 137.035999139;
 
 // Specific Parameters:
 // Masses
@@ -123,7 +124,9 @@ double TotalsigmaSI(double mX, double sigman0, double A, double vX)
 		double mNucleus = NucleusMass(A);
 		double q2max	= 4.0 * std::pow(Mu(mX, mNucleus), 2.0) * vX * vX;
 		double x		= a * a * q2max;
-		ff				= (FormFactor == "ChargeScreening") ? 1.0 + 1.0 / (1.0 + x) - 2.0 / x * log(1.0 + x) : x * x / (1.0 + x);
+		double qRef		= aEM * mElectron;
+		double y		= a * a * qRef * qRef;
+		ff				= (FormFactor == "ChargeScreening") ? 1.0 + 1.0 / (1.0 + x) - 2.0 / x * log(1.0 + x) : y * y / (1.0 + x);
 	}
 	return sigmaSI(mX, sigman0, A) * ff;
 }

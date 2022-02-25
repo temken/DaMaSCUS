@@ -18,7 +18,7 @@ extern const double sec, minute, hour, day, year;
 // Temperature
 extern const double Kelvin;
 // Others
-extern const double erg;
+extern const double erg, aEM;
 
 // Specific Parameters:
 // Masses
