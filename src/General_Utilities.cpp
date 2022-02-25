@@ -145,7 +145,7 @@ void Read_Config_File(const char* inputfile)
 	try
 	{
 		sigma0 = cfg.lookup("sigma");
-		sigma0 *= pb;
+		sigma0 *= cm * cm;
 	}
 	catch(const SettingNotFoundException& nfex)
 	{
@@ -244,8 +244,8 @@ void LogFile_Initialize(int numprocs, std::ofstream& f)
 	  << "\tvEarth[km/s]\t" << InUnits(vEarth.norm(), km / sec) << endl
 	  << endl
 	  << "//DM Data:" << endl
-	  << "\tmDM[GeV]\t" << mChi << endl
-	  << "\tsig0[pb]\t" << sigma0 / pb << endl
+	  << "\tmDM[MeV]\t" << mChi / MeV << endl
+	  << "\tsig0[cm^2]\t" << sigma0 / cm / cm << endl
 	  << "\tForm Factor\t" << FormFactor << endl
 	  << endl
 	  << "//Velocity cut off:" << endl

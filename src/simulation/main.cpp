@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
 
 	// 1. Initial MC run without scatterings:
 	// Initialize the earth model for initial run
-	double sigmaInitial = 1e-20 * pb;
+	double sigmaInitial = 1.0e-60 * cm * cm;
 	Initialize_PREM(mChi, sigmaInitial);
 	// Deactivate formfactor, if it is used:
 	string formfactor0 = FormFactor;

@@ -57,7 +57,7 @@ Next you fix the simulation date and time, which is mostly used to determine the
 	//Dark Matter Data
 		//Particle data
 			mass		=	500.0;		//in MeV
-			sigma 		=	1.0;		//in pb 
+			sigma 		=	1e-36;		//in cm^2 
 			formfactor	=	"None";		//Options: "None", "HelmApproximation"
 		//DM Halo 
 			halomodel	=	"SHM";		//Options: Standard Halo Model "SHM",...
