@@ -15,6 +15,9 @@ extern double g_Factor(int layer);
 extern void Initialize_PREM(double mChi, double sigma0);
 extern void Update_PREM(double mChi, double sigma0, double velocity);
 
+// Mean free path
+extern double Mean_Free_Path(double r, double mX, double sigma, double v);
+
 // tExit Function: Calculates when the particle exits the current layer
 extern double tExit(Eigen::Vector3d& position, Eigen::Vector3d& vel);
 

@@ -170,6 +170,28 @@ void Update_PREM(double mX, double sigma0, double velocity)
 	}
 }
 
+double Mean_Free_Path(double r, double mX, double sigma, double v)
+{
+	double lambda_inv	= 0.0;
+	int layer			= PREM_Layer(r);
+	double mass_density = PREM_Mass_Density(r);
+	// Core:
+	if(layer <= 1)
+		for(int i = 0; i < 9; i++)
+			lambda_inv += Elements_Core[i][2] * mass_density / NucleusMass(Elements_Core[i][1]) * TotalsigmaSI(mX, sigma, Elements_Core[i][1], v);
+	// Mantle
+	else if(layer <= 9)
+		for(int i = 0; i < 14; i++)
+			lambda_inv += Elements_Mantle[i][2] * mass_density / NucleusMass(Elements_Mantle[i][1]) * TotalsigmaSI(mX, sigma, Elements_Mantle[i][1], v);
+	// Outside
+	else
+	{
+		std::cerr << "Erro in Mean_Free_Path: Outside at r = " << r / rEarth << " rEarth." << endl;
+		std::exit(EXIT_FAILURE);
+	}
+	return 1.0 / lambda_inv;
+}
+
 // Return Prefactor:
 double g_Factor(int layer)
 {

@@ -302,6 +302,27 @@ void LogFile_Finalize(unsigned long long int nParticles, unsigned long long int 
 	  << "\tTotal[s]\t\t\t" << duration3 << "\t(" << floor(duration3 / 3600.0) << ":" << floor(fmod(duration3 / 60.0, 60.0)) << ":" << floor(fmod(duration3, 60.0)) << ":" << floor(fmod(1000 * duration3, 1000.0)) << ")" << endl;
 
 	f.close();
+
+	std::cout << "\n////////////////////////////////////////////////////\n\n"
+			  << "//Simulation end: " << std::ctime(&end_time) << endl
+			  << "//Results" << endl
+			  << "\tData points per iso-ring:\t" << nData << endl
+			  << "\tSimulated particles:\t\t" << (double) nParticles << endl
+			  << "\tParticles below vcutoff:\t" << 100.0 * vcutoff / nParticles << " \%" << endl
+			  << "\tFree particles:\t\t\t" << 100.0 * nFree / nParticles << " \%" << endl
+			  << "\tScatterings pp:\t\t\t" << (double) nScatterings / nParticles << endl
+			  << "\tDepth crossing pp:\t\t" << CrossingPerParticle << "\t(" << CrossingPerParticle0 << ")" << endl
+			  << endl
+			  << "\tAv. Number Density[cm^-3]:\t" << InUnits(AvDensity, pow(cm, -3.0)) << endl
+			  << "\tAv. Energy Density[GeV cm^-3]:\t" << InUnits(mChi * AvDensity, GeV / cm / cm / cm) << endl
+			  << "\n//Computation time\n"
+			  << "\tInitial run[s]\t\t\t" << duration1 << "\t(" << floor(duration1 / 3600.0) << ":" << floor(fmod(duration1 / 60.0, 60.0)) << ":" << floor(fmod(duration1, 60.0)) << ":" << floor(fmod(1000 * duration1, 1000.0)) << ")" << endl
+			  << "\tPart/sec\t\t\t" << nIni / duration1 << endl
+			  << endl
+			  << "\tMain run[s]\t\t\t" << duration2 << "\t(" << floor(duration2 / 3600.0) << ":" << floor(fmod(duration2 / 60.0, 60.0)) << ":" << floor(fmod(duration2, 60.0)) << ":" << floor(fmod(1000 * duration2, 1000.0)) << ")" << endl
+			  << "\tPart/sec\t\t\t" << nParticles / duration2 << endl
+			  << endl
+			  << "\tTotal[s]\t\t\t" << duration3 << "\t(" << floor(duration3 / 3600.0) << ":" << floor(fmod(duration3 / 60.0, 60.0)) << ":" << floor(fmod(duration3, 60.0)) << ":" << floor(fmod(1000 * duration3, 1000.0)) << ")" << endl;
 }
 
 // Area of isodetection rings

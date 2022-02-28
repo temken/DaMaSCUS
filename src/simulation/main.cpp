@@ -136,7 +136,14 @@ int main(int argc, char* argv[])
 	// Initialize the earth model for the main run
 	Initialize_PREM(mChi, sigma0);
 	if(myRank == 0)
-		cout << "Start main MC simulation run with scatterings." << endl;
+		cout << "Start main MC simulation run with scatterings." << endl
+			 << "\tDM mass [MeV]:\t" << mChi / MeV << endl
+			 << "\tSigma [cm^2]:\t" << sigma0 / (cm * cm) << endl
+			 << "\tForm factor:\t" << FormFactor << endl
+			 << "\tMean free path:" << std::endl
+			 << "\t\tCore [rEarth]:\t\t" << Mean_Free_Path(0.0, mChi, sigma0, 300.0 * km / sec) / rEarth << std::endl
+			 << "\t\tMantle [rEarth]:\t" << Mean_Free_Path(0.8 * rEarth, mChi, sigma0, 300.0 * km / sec) / rEarth << std::endl
+			 << std::endl;
 	// Particle counter per isodetection ring
 	unsigned long long int Global_N[Isodetection_Rings];
 	unsigned long long int Local_N[Isodetection_Rings];
@@ -283,7 +290,7 @@ int main(int argc, char* argv[])
 		// computing time
 		t2			 = high_resolution_clock::now();
 		durationMain = 1e-6 * duration_cast<microseconds>(t2 - t1).count();
-		cout << "\tMain MC run finished\t"
+		cout << "Main MC run finished\t"
 			 << "(" << floor(durationMain) << " s)." << endl;
 	}
 	// Close all output files
