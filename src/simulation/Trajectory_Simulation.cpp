@@ -42,7 +42,12 @@ double Sample_Scattering_Angle(double mDM, double A, Eigen::Vector3d& vini, std:
 		double x						  = a * a * q2max;
 		double xi						  = ProbabilitySample(PRNG);
 		std::function<double(double)> cdf = [xi, x](double cosa) {
-			return xi - (((1.0 + x) * (x + cosa * x - 2.0 / (1.0 + x) + 4.0 / (2.0 + x - cosa * x) - 4.0 * log(2.0 * (1.0 + x)) + 4.0 * log(2.0 + x - cosa * x))) / (2.0 * (x * (2.0 + x) - 2.0 * (1.0 + x) * log(1.0 + x))));
+			double cdf;
+			if(x < 1.0e-3)
+				cdf = 1.0 / 8.0 * (7.0 + 3.0 * cosa - 3.0 * cosa * cosa + cosa * cosa * cosa);
+			else
+				cdf = (((1.0 + x) * (x + cosa * x - 2.0 / (1.0 + x) + 4.0 / (2.0 + x - cosa * x) + 4.0 * log((2.0 + x - cosa * x) / (2.0 * (1.0 + x))))) / (2.0 * (x * (2.0 + x) - 2.0 * (1.0 + x) * log(1.0 + x))));
+			return xi - cdf;
 		};
 		cos_chi = Find_Root(cdf, -1.0, 1.0, 1e-4);
 	}
